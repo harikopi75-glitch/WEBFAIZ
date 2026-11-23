@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kelompok 13 — RGB Color Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/bundled/lenis.min.js" defer></script>
+<style>
+:root{--b:#7a56d0;--bd:#3c1a82;--sh:#c3a8ff;--pg:#ece3fd;--card:#f7f2ff;--soft:#e9dffc;--ink:#2c1658;--mute:#795ba3;--acc:#7c3aed;--warn:#b45309;--sw:272px;--pix:"Press Start 2P",monospace;--vt:"VT323",monospace}
+*{box-sizing:border-box}
+html{scroll-padding-top:90px}
+body{margin:0;background:var(--pg);color:var(--ink);font:20px/1.35 var(--vt);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:-10%;z-index:-2;background:radial-gradient(ellipse at 80% 8%,#c9b2ff99,transparent 35%),radial-gradient(ellipse at 10% 75%,#dac2ffb3,transparent 38%);filter:blur(14px)}
+body:after{content:"";position:fixed;inset:0;z-index:-1;opacity:.3;background:radial-gradient(#8c64d9 1px,transparent 1px) 0 0/18px 18px;pointer-events:none}
+a{color:inherit;text-decoration:none}
+button,select,input{font:inherit;color:var(--ink)}
+:focus-visible{outline:3px solid #a78bfa;outline-offset:2px}
+/* ---- sidebar ---- */
+.sidebar{position:fixed;z-index:40;inset:0 auto 0 0;width:var(--sw);padding:16px 18px;background:#efe6fd;border-right:3px solid var(--b);box-shadow:5px 0 0 var(--sh);display:flex;flex-direction:column;gap:10px;overflow-y:auto}
+.sb-brand{display:flex;align-items:center;gap:10px}
+.sb-brand img{width:46px;height:46px;border-radius:50%}
+.sb-brand b{display:block;font:11px/1.4 var(--pix);color:var(--bd)}
+.sb-brand small{font-size:18px;color:var(--mute)}
+.orbit-wrap{position:relative;width:236px;height:236px;margin:2px auto 0;flex:none}
+.ring{position:absolute;inset:20px;border:2px dashed #b79cf6;border-radius:50%}
+.ring.r2{inset:68px;border-style:dotted;opacity:.6}
+#globe{position:absolute;left:62px;top:62px;width:112px;height:112px;image-rendering:pixelated;filter:drop-shadow(0 0 10px #a78bfa)}
+.orbit{position:absolute;inset:0;animation:spin 46s linear infinite}
+.node{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;transform:rotate(var(--a)) translateX(98px) rotate(calc(var(--a) * -1))}
+.node a{display:block;width:46px;height:46px;border:2px solid var(--b);border-radius:50%;background:var(--soft);overflow:hidden;box-shadow:2px 2px 0 var(--sh);animation:spin 46s linear infinite reverse;transition:box-shadow .2s,background .2s}
+.node a img{width:100%;height:100%;display:block}
+.node a:hover,.node a.on{background:#fff;border-color:var(--bd);box-shadow:0 0 0 3px var(--acc),3px 3px 0 var(--bd)}
+.orbit-wrap:hover .orbit,.orbit-wrap:hover .node a{animation-play-state:paused}
+@keyframes spin{to{transform:rotate(360deg)}}
+.orbit-label{text-align:center;font:9px/1.6 var(--pix);color:var(--acc);min-height:16px}
+.sb-h{font:8px var(--pix);color:#9377bf;margin:8px 4px 2px;letter-spacing:.05em}
+.mi{display:flex;align-items:center;gap:10px;padding:6px 10px;border:2px solid transparent;border-radius:6px;font-size:21px;color:#5a3a96}
+.mi img{width:28px;height:28px;border-radius:50%;background:var(--soft)}
+.mi:hover{background:#f7f2ff;border-color:#c9b0fa}
+.mi.on{background:var(--acc);color:#fff;border-color:var(--bd);box-shadow:3px 3px 0 var(--bd)}
+.sb-foot{margin-top:auto;padding-top:8px;font-size:17px;font-style:italic;color:var(--mute);text-align:center}
+.scrim{display:none}
+/* ---- wrapper / header ---- */
+.wrapper{margin-left:var(--sw);min-height:100vh}
+.hdr{position:sticky;top:0;z-index:30;height:64px;padding:0 clamp(14px,3vw,32px);display:flex;align-items:center;gap:12px;background:#f7f2ffee;border-bottom:3px solid var(--b);backdrop-filter:blur(8px)}
+.burger{display:none;padding:6px 10px}
+.hdr .sp{flex:1}
+.pill{display:flex;align-items:center;gap:8px;border:2px solid #a17af0;border-radius:8px;padding:5px 10px;background:var(--soft);font:9px var(--pix);color:#5c309c;box-shadow:3px 3px 0 #c2a2ff}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--acc)}
+.page{padding:20px clamp(14px,3vw,32px) 48px;max-width:1500px;margin:0 auto}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px}
+.toolbar h1{margin:0;font:14px var(--pix);color:var(--bd)}
+.crumb{font-size:19px;color:var(--mute)}.crumb b{color:var(--acc);font-weight:400}
+.hero{display:block;margin-bottom:18px;border:3px solid var(--b);border-radius:8px;box-shadow:6px 6px 0 var(--sh);overflow:hidden;background:#e0d1fd}
+.hero img{display:block;width:100%;height:auto}
+/* ---- KPI ---- */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:18px}
+.kpi{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:3px solid var(--b);border-radius:8px;box-shadow:4px 4px 0 var(--sh)}
+.kpi img{width:52px;height:52px;border-radius:8px;background:var(--soft);border:2px solid #c5a6fa;flex:none}
+.kpi span{display:block;font-size:19px;color:var(--mute);line-height:1}
+.kpi b{display:block;font:13px/1.6 var(--pix);color:var(--acc);overflow-wrap:anywhere}
+/* ---- cards ---- */
+main{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:18px}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0}
+.kt-card{background:var(--card);border:3px solid var(--b);border-radius:8px;box-shadow:5px 5px 0 var(--sh);padding:0;scroll-margin-top:90px}
+.kt-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:2px dashed #cdb6f8}
+.kt-head img{width:30px;height:30px;border-radius:6px}
+h2{margin:0;font:11px/1.6 var(--pix);color:#50238d}
+.kt-body{padding:16px}
+.row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+button,label.btn{display:inline-block;background:var(--acc);color:#fff;border:0;border-radius:5px;padding:7px 14px;cursor:pointer;font:18px var(--vt);box-shadow:3px 3px 0 #421b84;transition:transform .15s,box-shadow .15s}
+button:hover,label.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #421b84}
+button.ghost,label.btn.ghost{border:2px solid #b28cf5;background:#f6efff;color:#6335a5;box-shadow:3px 3px 0 #d0b5ff}
+button.ghost:hover,label.btn.ghost:hover{background:#eadcff}
+input,select{background:#fffaff;border:2px solid #b997f4;border-radius:5px;padding:5px 8px;font:19px var(--vt);max-width:100%}
+input[type=file]{display:none}input[type=number]{width:92px}
+.hint,.msg{font-size:18px;line-height:1.3;color:#785ba2;margin:9px 0 0}
+.msg{color:var(--warn);min-height:1.2em}
+.drop{border:3px dashed #a37be9;border-radius:8px;padding:16px;text-align:center;background:#f0e8ff;color:#6942a2;font-size:22px}
+.drop img{display:block;width:70px;margin:0 auto 4px}
+.drop.on{border-color:#7133c5;background:#e8d9ff}
+#cards,#smp{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.card{border:2px solid #c5a6fa;border-radius:7px;padding:9px;background:#f9f4ff;box-shadow:3px 3px 0 #e2ceff;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card canvas{width:100%;height:190px;object-fit:contain;cursor:crosshair;border:1px solid #c4a5f5;border-radius:4px;background:repeating-conic-gradient(#eee7f7 0 25%,transparent 0 50%) 0 0/12px 12px}
+.card .ph{height:190px;display:grid;place-items:center;color:var(--mute)}
+.card .x{padding:4px 9px;background:#fff0e0;color:#96500a;border:2px solid #f2bd80;box-shadow:2px 2px 0 #e8b476;font-size:16px}
+.mono{font:18px var(--vt)}.pred{font:20px var(--vt);color:#6d28d9}
+.chip{display:inline-block;width:14px;height:14px;border-radius:3px;border:1px solid #b28cf5;vertical-align:-2px;margin-right:6px}
+canvas#chart{width:100%;height:auto;aspect-ratio:16/10;background:#fff;border:2px solid #c4a5f6;border-radius:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-top:12px}
+.stats div{background:#f1e8ff;border:2px solid #c6a7fa;border-radius:6px;box-shadow:2px 2px 0 #dcc7ff;padding:8px 10px}
+.stats span{display:block;font-size:16px;color:#7353a0}
+.stats b{font:20px var(--vt);color:#6e35cc;overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;font:18px var(--vt);margin-top:12px}
+th,td{text-align:right;padding:6px;border-bottom:1px dashed #d6c1f6}th:first-child,td:first-child{text-align:left}
+th{font:9px var(--pix);color:#8466b2}
+#liveView{width:100%;max-height:360px;object-fit:contain;background:#211632;border-radius:6px;cursor:crosshair;margin-top:10px;display:block}
+.livecols{display:grid;grid-template-columns:72px 1fr;gap:12px;margin-top:10px;align-items:center}
+#liveSw{height:64px;border-radius:6px;border:2px solid #b28cf5;background:#888}
+.concl{background:linear-gradient(145deg,#f2eaff,#fbf8ff)}
+.concl .big{font:clamp(18px,2.4vw,28px)/1.4 var(--pix);color:#6d28d9;text-shadow:3px 3px 0 #d0b8ff}
+.concl p{margin:8px 0;color:#705495}.concl .w{color:var(--warn)}
+.foot{margin-top:24px;text-align:center;font:9px var(--pix);color:#9377bf}
+.bi{width:20px;height:20px;vertical-align:-5px;margin-right:6px;image-rendering:pixelated}
+.toast{min-height:1.2em;font-size:18px;color:#4d7c0f;margin:8px 0 0}
+/* ---- responsive ---- */
+@media(max-width:1100px){main{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1023px){
+ .sidebar{transform:translateX(-100%);transition:transform .3s}
+ body.nav-open .sidebar{transform:none}
+ body.nav-open .scrim{display:block;position:fixed;inset:0;z-index:35;background:#2c165866}
+ .wrapper{margin-left:0}.burger{display:inline-block}
+}
+@media(max-width:560px){.kpis{grid-template-columns:1fr}.pill{display:none}.toolbar h1{font-size:11px}}
+
+/* ---- animasi beranda ---- */
+.hero{position:relative}
+.hero .pz{will-change:transform;transition:transform .25s ease-out}
+.hero .pz img{animation:breathe 14s ease-in-out infinite;transform-origin:60% 70%}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+.fx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.fx .shine{position:absolute;top:-20%;bottom:-20%;width:14%;left:-25%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);animation:shine 7s ease-in-out 1.5s infinite}
+@keyframes shine{0%{left:-25%}38%,100%{left:125%}}
+.fx .sp{position:absolute;width:var(--s,22px);height:var(--s,22px);margin:calc(var(--s,22px)/-2) 0 0 calc(var(--s,22px)/-2);animation:twinkle var(--d,3s) ease-in-out var(--l,0s) infinite}
+.fx .sp svg{width:100%;height:100%;display:block}
+@keyframes twinkle{0%,100%{transform:scale(.2) rotate(0);opacity:0}50%{transform:scale(1) rotate(45deg);opacity:1}}
+.fx .bb{position:absolute;width:var(--s,8px);height:var(--s,8px);border-radius:50%;background:rgba(255,255,255,.75);border:2px solid var(--c,#60a5fa);animation:bub var(--d,3s) ease-in infinite var(--l,0s);opacity:0}
+@keyframes bub{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:1}100%{transform:translate(var(--x,6px),-110px) scale(1);opacity:0}}
+.fx .lf{position:absolute;top:-14%;left:var(--x);width:var(--s,26px);animation:fall var(--d,16s) linear var(--l,0s) infinite;opacity:0}
+.fx .lf svg{width:100%;display:block;animation:sway 3.4s ease-in-out infinite alternate;transform-origin:50% 0}
+@keyframes fall{0%{top:-14%;opacity:0}8%{opacity:.9}90%{opacity:.9}100%{top:106%;opacity:0}}
+@keyframes sway{from{transform:translateX(-22px) rotate(-35deg)}to{transform:translateX(22px) rotate(35deg)}}
+.fx .ff{position:absolute;width:10px;height:10px;border-radius:50%;background:#fde047;box-shadow:0 0 12px 5px rgba(250,204,21,.65);animation:float var(--d,6s) ease-in-out var(--l,0s) infinite;opacity:0}
+@keyframes float{0%{transform:translate(0,30px);opacity:0}25%,75%{opacity:1}50%{transform:translate(var(--x,14px),-26px)}100%{transform:translate(calc(var(--x,14px)*-1),-80px);opacity:0}}
+.flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 4px;margin:-4px 0 18px;padding:10px 12px;border:3px solid var(--b);border-radius:8px;background:#f7f2ff;box-shadow:4px 4px 0 var(--sh)}
+.flow .st{display:flex;align-items:center;gap:8px;padding:4px 12px;border:2px solid var(--b);border-radius:6px;background:#fff;font-size:19px;animation:stg 8s ease-in-out infinite}
+.flow .st:nth-of-type(2){animation-delay:2s}.flow .st:nth-of-type(3){animation-delay:4s}.flow .st:nth-of-type(4){animation-delay:6s}
+.flow .st i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#7c3aed;color:#fff;font-style:normal;font-size:16px}
+@keyframes stg{0%,22%,100%{background:#fff;transform:none}6%,16%{background:#dcfce7;transform:translateY(-4px)}}
+.flow .ar{width:34px;height:6px;margin:0 2px;border-radius:3px;background:repeating-linear-gradient(90deg,#a78bfa 0 6px,transparent 6px 10px);background-size:20px 6px;animation:dash 1s linear infinite}
+@keyframes dash{to{background-position:20px 0}}
+
+/* ---- judul hidup + petani ---- */
+.hero{container-type:inline-size}
+.ttl{position:absolute;left:22.2%;width:46%;top:26.4%;text-align:center;font-family:"Press Start 2P",ui-monospace,Menlo,monospace;pointer-events:none;user-select:none}
+.ttl .t1{display:flex;justify-content:center;font-size:5.4cqw;line-height:1;color:#2d1b69;text-shadow:0 .5cqw 0 #6d28d9}
+.ttl .t1 span{display:inline-block;animation:wv 2.6s ease-in-out infinite,hue 5s ease-in-out infinite;animation-delay:calc(var(--i)*.13s)}
+@keyframes wv{0%,55%,100%{transform:translateY(0)}27%{transform:translateY(-.9cqw)}}
+@keyframes hue{0%,100%{color:#2d1b69}50%{color:#5b21b6}}
+.ttl .t2{display:flex;align-items:center;justify-content:center;gap:2.6cqw;margin-top:3.2cqw}
+.ttl .ln{display:block;width:11cqw;height:.9cqw;background:#4c1d95;border:.25cqw solid #2d1b69;border-radius:.3cqw;animation:lnx 2.6s ease-in-out infinite}
+.ttl .ln:last-child{animation-delay:.4s}
+@keyframes lnx{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.82)}}
+.ttl .n13{display:block;font-size:9cqw;line-height:1;color:#a78bfa;-webkit-text-stroke:.6cqw #2d1b69;paint-order:stroke fill;text-shadow:0 .9cqw 0 #2d1b69;animation:pop 2.2s ease-in-out infinite;transform-origin:50% 80%}
+@keyframes pop{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.07) rotate(-2.2deg)}60%{transform:scale(1.03) rotate(2deg)}}
+.farmer{position:absolute;left:0;width:100%;top:26.2%;height:0;pointer-events:none}
+.fw{position:absolute;bottom:0;left:25%;width:0;animation:walk 18s linear infinite}
+@keyframes walk{0%{left:25%}50%{left:63%}100%{left:25%}}
+.fs{position:absolute;bottom:0;left:-2.5cqw;width:5cqw;animation:face 18s steps(1) infinite}
+@keyframes face{0%{transform:scaleX(1)}50%{transform:scaleX(-1)}}
+.fh{position:relative;width:100%;aspect-ratio:16/19;transform-origin:50% 100%;animation:hop 1s ease-in-out infinite}
+.fh svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.fh .fa{animation:fra 1s steps(1) infinite}.fh .fb{animation:frb 1s steps(1) infinite}
+@keyframes fra{0%{opacity:1}22%{opacity:0}78%{opacity:1}}
+@keyframes frb{0%{opacity:0}22%{opacity:1}78%{opacity:0}}
+@keyframes hop{0%,100%{transform:translateY(0) scale(1.12,.88)}10%{transform:translateY(0) scale(1.12,.88)}45%{transform:translateY(-125%) scale(.93,1.08)}80%{transform:translateY(0) scale(1.1,.9)}}
+.fsh{position:absolute;left:12%;right:12%;bottom:-.5cqw;height:.9cqw;border-radius:50%;background:rgba(45,27,105,.28);animation:shd 1s ease-in-out infinite}
+@keyframes shd{0%,100%{transform:scaleX(1);opacity:.8}45%{transform:scaleX(.5);opacity:.35}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar" aria-label="Navigasi utama">
+  <div class="sb-brand"><img src="assets/badge13.png" alt="Kelompok 13"><div><b>RGB COLOR LAB</b><small>Nutrisi Tanaman</small></div></div>
+  <div class="orbit-wrap">
+    <div class="ring"></div><div class="ring r2"></div>
+    <canvas id="globe" width="56" height="56" aria-label="Bumi pixel berputar"></canvas>
+    <div class="orbit">
+      <div class="node" style="--a:-90deg"><a data-nav data-label="DASHBOARD" href="#home" title="Dashboard"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMjYiIGhlaWdodD0iMjQiIGZpbGw9IiM3YzNhZWQiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjM0IiB5PSI0IiB3aWR0aD0iMjYiIGhlaWdodD0iMTQiIGZpbGw9IiNjM2E4ZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjM0IiB5PSIyMiIgd2lkdGg9IjI2IiBoZWlnaHQ9IjM4IiBmaWxsPSIjZWNlM2ZkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSI0IiB5PSIzMiIgd2lkdGg9IjI2IiBoZWlnaHQ9IjI4IiBmaWxsPSIjZTlkZmZjIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSI5IiB5PSIyMCIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI2ZmZiIvPjxyZWN0IHg9IjE1IiB5PSIxNCIgd2lkdGg9IjQiIGhlaWdodD0iMTAiIGZpbGw9IiNmZmYiLz48cmVjdCB4PSIyMSIgeT0iOSIgd2lkdGg9IjQiIGhlaWdodD0iMTUiIGZpbGw9IiNmZmYiLz4KPHJlY3QgeD0iMzgiIHk9IjkiIHdpZHRoPSIxOCIgaGVpZ2h0PSI0IiBmaWxsPSIjM2MxYTgyIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM3IDMwKSBzY2FsZSgxLjIpIj48cGF0aCBkPSJNMTAgMjRWMTIiIHN0cm9rZT0iIzE2NjUzNCIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTEwIDE0QzIgMTQgMCA4IDAgNEM2IDQgMTAgNyAxMCAxNFoiIGZpbGw9IiM0YWRlODAiIHN0cm9rZT0iIzE2NjUzNCIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTEwIDEyQzEwIDYgMTQgMiAyMCAyQzIwIDggMTYgMTIgMTAgMTJaIiBmaWxsPSIjODZlZmFjIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMiIvPjwvZz4KPHJlY3QgeD0iOSIgeT0iNTAiIHdpZHRoPSIxNiIgaGVpZ2h0PSI0IiBmaWxsPSIjM2MxYTgyIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDggMzQpIHJvdGF0ZSgwKSBzY2FsZSgwLjU1KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt="Dashboard"></a></div>
+      <div class="node" style="--a:-18deg"><a data-nav data-label="FOTO STANDAR" href="#standard" title="Foto standar"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMjYiIGhlaWdodD0iNTYiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjZWVmNGZmIi8+PHJlY3QgeD0iOCIgeT0iMTYiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjY2ZlMGZmIi8+CjxyZWN0IHg9IjgiIHk9IjI0IiB3aWR0aD0iMTgiIGhlaWdodD0iNyIgZmlsbD0iIzlkYmNmNSIvPjxyZWN0IHg9IjgiIHk9IjMyIiB3aWR0aD0iMTgiIGhlaWdodD0iNyIgZmlsbD0iIzZhOTJlMCIvPgo8cmVjdCB4PSI4IiB5PSI0MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjciIGZpbGw9IiMzYTYyYzAiLz4KPHRleHQgeD0iMTciIHk9IjU2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjM2MxYTgyIj5wcG08L3RleHQ+CjxyZWN0IHg9IjI4IiB5PSIzMiIgd2lkdGg9IjMzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzOCIgeT0iMjciIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzNyIgeT0iMzYiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgZmlsbD0iI2VjZTNmZCIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iNDEiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSI3IiBmaWxsPSIjM2E2MmMwIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQyIDYpIHJvdGF0ZSgwKSBzY2FsZSgwLjg1KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt="Foto standar"></a></div>
+      <div class="node" style="--a:54deg"><a data-nav data-label="FOTO SAMPEL" href="#sample" title="Foto sampel"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSIyNCIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjM0IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNCIgeT0iMTciIHdpZHRoPSIxOCIgaGVpZ2h0PSI4IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNSIgeT0iMzEiIHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgZmlsbD0iI2VjZTNmZCIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMjEiIHk9IjM3IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiMzYTYyYzAiLz4KPHJlY3QgeD0iNDAiIHk9IjI5IiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMgMikgcm90YXRlKC0xMCkgc2NhbGUoMC44KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+CjxwYXRoIGQ9Ik01MCAxNGg0djRoNHY0aDJ2OGgtMnY0aC00djJoLTh2LTJoLTR2LTRoLTJ2LThoMnYtNGg0di00aDR6IiBmaWxsPSIjMzhiZGY4IiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSI0NiIgeT0iMjIiIHdpZHRoPSIzIiBoZWlnaHQ9IjUiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt="Foto sampel"></a></div>
+      <div class="node" style="--a:126deg"><a data-nav data-label="KURVA KALIBRASI" href="#calibration" title="Kurva kalibrasi"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIGZpbGw9IiNmN2YyZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0xMiAyMlY1Mkg1NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTE0IDQ4IEwyNCA0MyBMMzQgMzYgTDQ0IDI4IEw1MCAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjN2MzYWVkIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMjEiIHk9IjQwIiB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSIjYTc4YmZhIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSIzMSIgeT0iMzMiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiIGZpbGw9IiNhNzhiZmEiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxyZWN0IHg9IjEyIiB5PSI0NSIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2E3OGJmYSIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjIiLz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzMgNikgc2NhbGUoMS4wNSkiPjxwYXRoIGQ9Ik0xMCAyNFYxMiIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjMiLz48cGF0aCBkPSJNMTAgMTRDMiAxNCAwIDggMCA0QzYgNCAxMCA3IDEwIDE0WiIgZmlsbD0iIzRhZGU4MCIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMTAgMTJDMTAgNiAxNCAyIDIwIDJDMjAgOCAxNiAxMiAxMCAxMloiIGZpbGw9IiM4NmVmYWMiIHN0cm9rZT0iIzE2NjUzNCIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9nPjwvc3ZnPg==" alt="Kurva kalibrasi"></a></div>
+      <div class="node" style="--a:198deg"><a data-nav data-label="KESIMPULAN" href="#conclusion" title="Kesimpulan"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iNDAiIGhlaWdodD0iNTIiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjE4IiB5PSIzIiB3aWR0aD0iMjAiIGhlaWdodD0iMTAiIGZpbGw9IiM3YzNhZWQiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0xNCAyMmw0IDQgNy04IiBmaWxsPSJub25lIiBzdHJva2U9IiMxNmEzNGEiIHN0cm9rZS13aWR0aD0iMyIvPjxyZWN0IHg9IjI5IiB5PSIyMSIgd2lkdGg9IjE0IiBoZWlnaHQ9IjMiIGZpbGw9IiNhNzhiZmEiLz4KPHBhdGggZD0iTTE0IDM0bDQgNCA3LTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE2YTM0YSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHJlY3QgeD0iMjkiIHk9IjMzIiB3aWR0aD0iMTQiIGhlaWdodD0iMyIgZmlsbD0iI2E3OGJmYSIvPgo8cmVjdCB4PSIxMyIgeT0iNDYiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzIiBmaWxsPSIjYTc4YmZhIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM2IDM4KSByb3RhdGUoMCkgc2NhbGUoMS4xKSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt="Kesimpulan"></a></div>
+    </div>
+  </div>
+  <div class="orbit-label" id="orbitLabel">KELOMPOK 13</div>
+  <div class="sb-h">MENU</div>
+  <a class="mi" data-nav data-label="DASHBOARD" href="#home"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMjYiIGhlaWdodD0iMjQiIGZpbGw9IiM3YzNhZWQiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjM0IiB5PSI0IiB3aWR0aD0iMjYiIGhlaWdodD0iMTQiIGZpbGw9IiNjM2E4ZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjM0IiB5PSIyMiIgd2lkdGg9IjI2IiBoZWlnaHQ9IjM4IiBmaWxsPSIjZWNlM2ZkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSI0IiB5PSIzMiIgd2lkdGg9IjI2IiBoZWlnaHQ9IjI4IiBmaWxsPSIjZTlkZmZjIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSI5IiB5PSIyMCIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI2ZmZiIvPjxyZWN0IHg9IjE1IiB5PSIxNCIgd2lkdGg9IjQiIGhlaWdodD0iMTAiIGZpbGw9IiNmZmYiLz48cmVjdCB4PSIyMSIgeT0iOSIgd2lkdGg9IjQiIGhlaWdodD0iMTUiIGZpbGw9IiNmZmYiLz4KPHJlY3QgeD0iMzgiIHk9IjkiIHdpZHRoPSIxOCIgaGVpZ2h0PSI0IiBmaWxsPSIjM2MxYTgyIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM3IDMwKSBzY2FsZSgxLjIpIj48cGF0aCBkPSJNMTAgMjRWMTIiIHN0cm9rZT0iIzE2NjUzNCIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTEwIDE0QzIgMTQgMCA4IDAgNEM2IDQgMTAgNyAxMCAxNFoiIGZpbGw9IiM0YWRlODAiIHN0cm9rZT0iIzE2NjUzNCIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTEwIDEyQzEwIDYgMTQgMiAyMCAyQzIwIDggMTYgMTIgMTAgMTJaIiBmaWxsPSIjODZlZmFjIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMiIvPjwvZz4KPHJlY3QgeD0iOSIgeT0iNTAiIHdpZHRoPSIxNiIgaGVpZ2h0PSI0IiBmaWxsPSIjM2MxYTgyIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDggMzQpIHJvdGF0ZSgwKSBzY2FsZSgwLjU1KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt="">Dashboard</a>
+  <a class="mi" data-nav data-label="FOTO STANDAR" href="#standard"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMjYiIGhlaWdodD0iNTYiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjZWVmNGZmIi8+PHJlY3QgeD0iOCIgeT0iMTYiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjY2ZlMGZmIi8+CjxyZWN0IHg9IjgiIHk9IjI0IiB3aWR0aD0iMTgiIGhlaWdodD0iNyIgZmlsbD0iIzlkYmNmNSIvPjxyZWN0IHg9IjgiIHk9IjMyIiB3aWR0aD0iMTgiIGhlaWdodD0iNyIgZmlsbD0iIzZhOTJlMCIvPgo8cmVjdCB4PSI4IiB5PSI0MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjciIGZpbGw9IiMzYTYyYzAiLz4KPHRleHQgeD0iMTciIHk9IjU2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjM2MxYTgyIj5wcG08L3RleHQ+CjxyZWN0IHg9IjI4IiB5PSIzMiIgd2lkdGg9IjMzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzOCIgeT0iMjciIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzNyIgeT0iMzYiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgZmlsbD0iI2VjZTNmZCIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iNDEiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSI3IiBmaWxsPSIjM2E2MmMwIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQyIDYpIHJvdGF0ZSgwKSBzY2FsZSgwLjg1KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt="">Foto Standar</a>
+  <a class="mi" data-nav data-label="FOTO SAMPEL" href="#sample"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSIyNCIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjM0IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNCIgeT0iMTciIHdpZHRoPSIxOCIgaGVpZ2h0PSI4IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNSIgeT0iMzEiIHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgZmlsbD0iI2VjZTNmZCIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMjEiIHk9IjM3IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiMzYTYyYzAiLz4KPHJlY3QgeD0iNDAiIHk9IjI5IiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMgMikgcm90YXRlKC0xMCkgc2NhbGUoMC44KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+CjxwYXRoIGQ9Ik01MCAxNGg0djRoNHY0aDJ2OGgtMnY0aC00djJoLTh2LTJoLTR2LTRoLTJ2LThoMnYtNGg0di00aDR6IiBmaWxsPSIjMzhiZGY4IiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSI0NiIgeT0iMjIiIHdpZHRoPSIzIiBoZWlnaHQ9IjUiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt="">Foto Sampel</a>
+  <a class="mi" data-nav data-label="KURVA KALIBRASI" href="#calibration"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIGZpbGw9IiNmN2YyZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0xMiAyMlY1Mkg1NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTE0IDQ4IEwyNCA0MyBMMzQgMzYgTDQ0IDI4IEw1MCAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjN2MzYWVkIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMjEiIHk9IjQwIiB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSIjYTc4YmZhIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSIzMSIgeT0iMzMiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiIGZpbGw9IiNhNzhiZmEiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxyZWN0IHg9IjEyIiB5PSI0NSIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2E3OGJmYSIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjIiLz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzMgNikgc2NhbGUoMS4wNSkiPjxwYXRoIGQ9Ik0xMCAyNFYxMiIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjMiLz48cGF0aCBkPSJNMTAgMTRDMiAxNCAwIDggMCA0QzYgNCAxMCA3IDEwIDE0WiIgZmlsbD0iIzRhZGU4MCIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMTAgMTJDMTAgNiAxNCAyIDIwIDJDMjAgOCAxNiAxMiAxMCAxMloiIGZpbGw9IiM4NmVmYWMiIHN0cm9rZT0iIzE2NjUzNCIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9nPjwvc3ZnPg==" alt="">Kurva Kalibrasi</a>
+  <a class="mi" data-nav data-label="KESIMPULAN" href="#conclusion"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iNDAiIGhlaWdodD0iNTIiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjE4IiB5PSIzIiB3aWR0aD0iMjAiIGhlaWdodD0iMTAiIGZpbGw9IiM3YzNhZWQiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0xNCAyMmw0IDQgNy04IiBmaWxsPSJub25lIiBzdHJva2U9IiMxNmEzNGEiIHN0cm9rZS13aWR0aD0iMyIvPjxyZWN0IHg9IjI5IiB5PSIyMSIgd2lkdGg9IjE0IiBoZWlnaHQ9IjMiIGZpbGw9IiNhNzhiZmEiLz4KPHBhdGggZD0iTTE0IDM0bDQgNCA3LTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE2YTM0YSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHJlY3QgeD0iMjkiIHk9IjMzIiB3aWR0aD0iMTQiIGhlaWdodD0iMyIgZmlsbD0iI2E3OGJmYSIvPgo8cmVjdCB4PSIxMyIgeT0iNDYiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzIiBmaWxsPSIjYTc4YmZhIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM2IDM4KSByb3RhdGUoMCkgc2NhbGUoMS4xKSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt="">Kesimpulan</a>
+  <div class="sb-foot">Menyuburkan Tanaman, Menumbuhkan Masa Depan Pertanian</div>
+</aside>
+<div class="scrim" id="scrim"></div>
+
+<div class="wrapper">
+  <header class="hdr">
+    <button class="burger ghost" id="burger" type="button" aria-label="Buka menu">☰</button>
+    <span class="crumb">Beranda / <b>Dashboard</b></span>
+    <span class="sp"></span>
+    <span class="pill"><i></i>RGB CALIBRATION LAB</span>
+    <button class="ghost" id="hDemo" type="button">Data demo</button>
+    <button class="ghost" id="hSave" type="button" title="Simpan data kalibrasi (foto + ppm)"><img class="bi" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cGF0aCBkPSJNNiA2SDUwTDU4IDE0VjU4SDZaIiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNiIgeT0iNiIgd2lkdGg9IjI2IiBoZWlnaHQ9IjE2IiBmaWxsPSIjZWNlM2ZkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzNCIgeT0iMTAiIHdpZHRoPSI1IiBoZWlnaHQ9IjkiIGZpbGw9IiMzYzFhODIiLz4KPHJlY3QgeD0iMTQiIHk9IjM0IiB3aWR0aD0iMzYiIGhlaWdodD0iMjQiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjE5IiB5PSI0MSIgd2lkdGg9IjI2IiBoZWlnaHQ9IjMiIGZpbGw9IiNhNzhiZmEiLz48cmVjdCB4PSIxOSIgeT0iNDgiIHdpZHRoPSIxOCIgaGVpZ2h0PSIzIiBmaWxsPSIjYTc4YmZhIi8+PC9zdmc+" alt="">Simpan</button>
+    <button id="hCsv" type="button">Unduh CSV</button>
+  </header>
+  <div class="page">
+    <div class="toolbar"><h1>DASHBOARD KALIBRASI RGB</h1><span class="crumb">Kelompok 13 · Nutrisi Tanaman</span></div>
+    <div class="hero" id="home"><div class="pz"><img src="assets/hero-bg.png" alt="Kelompok 13 — Nutrisi Tanaman: Menyuburkan Tanaman, Menumbuhkan Masa Depan Pertanian"></div><div class="ttl" role="img" aria-label="Kelompok 13"><div class="t1"><span style="--i:0">K</span><span style="--i:1">E</span><span style="--i:2">L</span><span style="--i:3">O</span><span style="--i:4">M</span><span style="--i:5">P</span><span style="--i:6">O</span><span style="--i:7">K</span></div><div class="t2"><i class="ln"></i><span class="n13">13</span><i class="ln"></i></div></div><div class="farmer" aria-hidden="true"><div class="fw"><div class="fs"><i class="fsh"></i><div class="fh"><svg class="fa" viewBox="0 0 16 19" shape-rendering="crispEdges"><rect x="4" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="6" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="7" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="8" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="9" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="11" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="1" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="6" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="7" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="8" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="9" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="10" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="11" y="1" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="2" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="6" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="7" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="8" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="9" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="10" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="11" y="2" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="3" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="6" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="7" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="8" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="9" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="10" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="11" y="3" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="0" y="4" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="1" y="4" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="3" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="4" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="5" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="6" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="7" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="8" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="9" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="10" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="11" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="12" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="13" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="14" y="4" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="15" y="4" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="1" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="6" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="7" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="8" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="9" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="11" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="12" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="13" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="14" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="6" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="6" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="7" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="8" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="9" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="10" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="11" y="6" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="7" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="7" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="6" y="7" width="1.02" height="1.02" fill="#2d1b69"/><rect x="7" y="7" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="8" y="7" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="9" y="7" width="1.02" height="1.02" fill="#2d1b69"/><rect x="10" y="7" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="11" y="7" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="8" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="8" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="6" y="8" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="7" y="8" width="1.02" height="1.02" fill="#c2410c"/><rect x="8" y="8" width="1.02" height="1.02" fill="#c2410c"/><rect x="9" y="8" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="10" y="8" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="11" y="8" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="9" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="5" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="6" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="7" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="8" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="9" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="10" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="11" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="12" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="9" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="10" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="10" width="1.02" height="1.02" fill="#2563eb"/><rect x="5" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="6" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="7" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="8" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="9" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="10" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="11" y="10" width="1.02" height="1.02" fill="#2563eb"/><rect x="12" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="10" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="11" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="11" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="11" width="1.02" height="1.02" fill="#22c55e"/><rect x="5" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="7" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="8" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="9" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="10" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="11" width="1.02" height="1.02" fill="#22c55e"/><rect x="12" y="11" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="11" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="12" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="12" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="12" width="1.02" height="1.02" fill="#22c55e"/><rect x="5" y="12" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="12" width="1.02" height="1.02" fill="#fde047"/><rect x="7" y="12" width="1.02" height="1.02" fill="#2563eb"/><rect x="8" y="12" width="1.02" height="1.02" fill="#2563eb"/><rect x="9" y="12" width="1.02" height="1.02" fill="#fde047"/><rect x="10" y="12" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="12" width="1.02" height="1.02" fill="#22c55e"/><rect x="12" y="12" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="12" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="13" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="3" y="13" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="5" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="7" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="8" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="9" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="10" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="12" y="13" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="13" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="2" y="14" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="4" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="5" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="7" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="8" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="9" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="10" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="12" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="13" y="14" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="15" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="15" width="1.02" height="1.02" fill="#2563eb"/><rect x="5" y="15" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="15" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="9" y="15" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="15" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="15" width="1.02" height="1.02" fill="#2563eb"/><rect x="12" y="15" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="16" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="16" width="1.02" height="1.02" fill="#2563eb"/><rect x="5" y="16" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="16" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="9" y="16" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="16" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="16" width="1.02" height="1.02" fill="#2563eb"/><rect x="12" y="16" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="17" width="1.02" height="1.02" fill="#7c4a1e"/><rect x="5" y="17" width="1.02" height="1.02" fill="#7c4a1e"/><rect x="6" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="9" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="17" width="1.02" height="1.02" fill="#7c4a1e"/><rect x="11" y="17" width="1.02" height="1.02" fill="#7c4a1e"/><rect x="12" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="18" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="18" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="18" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="6" y="18" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="9" y="18" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="18" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="11" y="18" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="12" y="18" width="1.02" height="1.02" fill="#3b1f6b"/></svg><svg class="fb" viewBox="0 0 16 19" shape-rendering="crispEdges"><rect x="4" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="6" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="7" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="8" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="9" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="11" y="0" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="1" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="6" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="7" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="8" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="9" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="10" y="1" width="1.02" height="1.02" fill="#facc15"/><rect x="11" y="1" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="2" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="6" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="7" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="8" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="9" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="10" y="2" width="1.02" height="1.02" fill="#facc15"/><rect x="11" y="2" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="3" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="6" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="7" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="8" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="9" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="10" y="3" width="1.02" height="1.02" fill="#b45309"/><rect x="11" y="3" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="0" y="4" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="1" y="4" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="3" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="4" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="5" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="6" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="7" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="8" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="9" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="10" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="11" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="12" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="13" y="4" width="1.02" height="1.02" fill="#facc15"/><rect x="14" y="4" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="15" y="4" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="1" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="6" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="7" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="8" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="9" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="11" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="12" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="13" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="14" y="5" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="6" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="6" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="7" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="8" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="9" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="10" y="6" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="11" y="6" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="7" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="7" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="6" y="7" width="1.02" height="1.02" fill="#2d1b69"/><rect x="7" y="7" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="8" y="7" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="9" y="7" width="1.02" height="1.02" fill="#2d1b69"/><rect x="10" y="7" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="11" y="7" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="8" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="8" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="6" y="8" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="7" y="8" width="1.02" height="1.02" fill="#c2410c"/><rect x="8" y="8" width="1.02" height="1.02" fill="#c2410c"/><rect x="9" y="8" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="10" y="8" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="11" y="8" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="9" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="3" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="5" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="6" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="7" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="8" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="9" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="10" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="11" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="12" y="9" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="9" width="1.02" height="1.02" fill="#fcd9b6"/><rect x="2" y="10" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="10" width="1.02" height="1.02" fill="#2563eb"/><rect x="5" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="6" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="7" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="8" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="9" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="10" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="11" y="10" width="1.02" height="1.02" fill="#2563eb"/><rect x="12" y="10" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="10" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="11" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="11" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="11" width="1.02" height="1.02" fill="#22c55e"/><rect x="5" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="7" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="8" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="9" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="10" y="11" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="11" width="1.02" height="1.02" fill="#22c55e"/><rect x="12" y="11" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="11" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="12" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="12" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="12" width="1.02" height="1.02" fill="#22c55e"/><rect x="5" y="12" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="12" width="1.02" height="1.02" fill="#fde047"/><rect x="7" y="12" width="1.02" height="1.02" fill="#2563eb"/><rect x="8" y="12" width="1.02" height="1.02" fill="#2563eb"/><rect x="9" y="12" width="1.02" height="1.02" fill="#fde047"/><rect x="10" y="12" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="12" width="1.02" height="1.02" fill="#22c55e"/><rect x="12" y="12" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="12" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="13" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="13" width="1.02" height="1.02" fill="#22c55e"/><rect x="4" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="5" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="7" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="8" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="9" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="10" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="13" width="1.02" height="1.02" fill="#2563eb"/><rect x="12" y="13" width="1.02" height="1.02" fill="#22c55e"/><rect x="13" y="13" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="14" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="4" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="5" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="6" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="7" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="8" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="9" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="10" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="11" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="12" y="14" width="1.02" height="1.02" fill="#2563eb"/><rect x="13" y="14" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="15" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="15" width="1.02" height="1.02" fill="#2563eb"/><rect x="4" y="15" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="11" y="15" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="12" y="15" width="1.02" height="1.02" fill="#2563eb"/><rect x="13" y="15" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="16" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="16" width="1.02" height="1.02" fill="#7c4a1e"/><rect x="4" y="16" width="1.02" height="1.02" fill="#7c4a1e"/><rect x="5" y="16" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="16" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="11" y="16" width="1.02" height="1.02" fill="#7c4a1e"/><rect x="12" y="16" width="1.02" height="1.02" fill="#7c4a1e"/><rect x="13" y="16" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="2" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="3" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="4" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="5" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="10" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="11" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="12" y="17" width="1.02" height="1.02" fill="#3b1f6b"/><rect x="13" y="17" width="1.02" height="1.02" fill="#3b1f6b"/></svg></div></div></div></div><div class="fx" id="fx" aria-hidden="true"></div></div>
+    <div class="flow" aria-label="Alur kerja"><span class="st"><i>1</i>Foto strip warna</span><b class="ar"></b><span class="st"><i>2</i>Baca warna RGB</span><b class="ar"></b><span class="st"><i>3</i>Kurva kalibrasi</span><b class="ar"></b><span class="st"><i>4</i>Hasil ppm</span></div>
+
+    <div class="kpis">
+      <div class="kpi"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMjYiIGhlaWdodD0iNTYiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjZWVmNGZmIi8+PHJlY3QgeD0iOCIgeT0iMTYiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjY2ZlMGZmIi8+CjxyZWN0IHg9IjgiIHk9IjI0IiB3aWR0aD0iMTgiIGhlaWdodD0iNyIgZmlsbD0iIzlkYmNmNSIvPjxyZWN0IHg9IjgiIHk9IjMyIiB3aWR0aD0iMTgiIGhlaWdodD0iNyIgZmlsbD0iIzZhOTJlMCIvPgo8cmVjdCB4PSI4IiB5PSI0MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjciIGZpbGw9IiMzYTYyYzAiLz4KPHRleHQgeD0iMTciIHk9IjU2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjM2MxYTgyIj5wcG08L3RleHQ+CjxyZWN0IHg9IjI4IiB5PSIzMiIgd2lkdGg9IjMzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzOCIgeT0iMjciIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzNyIgeT0iMzYiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgZmlsbD0iI2VjZTNmZCIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iNDEiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSI3IiBmaWxsPSIjM2E2MmMwIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQyIDYpIHJvdGF0ZSgwKSBzY2FsZSgwLjg1KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt=""><div><span>Foto standar</span><b id="kS">0</b></div></div>
+      <div class="kpi"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSIyNCIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjM0IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNCIgeT0iMTciIHdpZHRoPSIxOCIgaGVpZ2h0PSI4IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNSIgeT0iMzEiIHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgZmlsbD0iI2VjZTNmZCIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMjEiIHk9IjM3IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiMzYTYyYzAiLz4KPHJlY3QgeD0iNDAiIHk9IjI5IiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMgMikgcm90YXRlKC0xMCkgc2NhbGUoMC44KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+CjxwYXRoIGQ9Ik01MCAxNGg0djRoNHY0aDJ2OGgtMnY0aC00djJoLTh2LTJoLTR2LTRoLTJ2LThoMnYtNGg0di00aDR6IiBmaWxsPSIjMzhiZGY4IiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSI0NiIgeT0iMjIiIHdpZHRoPSIzIiBoZWlnaHQ9IjUiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt=""><div><span>Foto sampel</span><b id="kP">0</b></div></div>
+      <div class="kpi"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIGZpbGw9IiNmN2YyZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0xMiAyMlY1Mkg1NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTE0IDQ4IEwyNCA0MyBMMzQgMzYgTDQ0IDI4IEw1MCAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjN2MzYWVkIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMjEiIHk9IjQwIiB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSIjYTc4YmZhIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSIzMSIgeT0iMzMiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiIGZpbGw9IiNhNzhiZmEiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxyZWN0IHg9IjEyIiB5PSI0NSIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2E3OGJmYSIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjIiLz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzMgNikgc2NhbGUoMS4wNSkiPjxwYXRoIGQ9Ik0xMCAyNFYxMiIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjMiLz48cGF0aCBkPSJNMTAgMTRDMiAxNCAwIDggMCA0QzYgNCAxMCA3IDEwIDE0WiIgZmlsbD0iIzRhZGU4MCIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMTAgMTJDMTAgNiAxNCAyIDIwIDJDMjAgOCAxNiAxMiAxMCAxMloiIGZpbGw9IiM4NmVmYWMiIHN0cm9rZT0iIzE2NjUzNCIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9nPjwvc3ZnPg==" alt=""><div><span>R²</span><b id="kR">–</b></div></div>
+      <div class="kpi"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48Y2lyY2xlIGN4PSIyNiIgY3k9IjI2IiByPSIxOCIgZmlsbD0iI2VjZmRmMyIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjQiLz4KPHBhdGggZD0iTTM5IDM5IEw1NiA1NiIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMzkgMzkgTDU2IDU2IiBzdHJva2U9IiM3YzNhZWQiIHN0cm9rZS13aWR0aD0iMyIvPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNiAxMikgc2NhbGUoMS4yKSI+PHBhdGggZD0iTTEwIDI0VjEyIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMyIvPjxwYXRoIGQ9Ik0xMCAxNEMyIDE0IDAgOCAwIDRDNiA0IDEwIDcgMTAgMTRaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMiIvPjxwYXRoIGQ9Ik0xMCAxMkMxMCA2IDE0IDIgMjAgMkMyMCA4IDE2IDEyIDEwIDEyWiIgZmlsbD0iIzg2ZWZhYyIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt=""><div><span>LOD</span><b id="kL">–</b></div></div>
+    </div>
+
+<main>
+  <div class="col">
+    <section class="kt-card" id="standard" aria-labelledby="h1s">
+      <div class="kt-head"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iMjYiIGhlaWdodD0iNTYiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjZWVmNGZmIi8+PHJlY3QgeD0iOCIgeT0iMTYiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjY2ZlMGZmIi8+CjxyZWN0IHg9IjgiIHk9IjI0IiB3aWR0aD0iMTgiIGhlaWdodD0iNyIgZmlsbD0iIzlkYmNmNSIvPjxyZWN0IHg9IjgiIHk9IjMyIiB3aWR0aD0iMTgiIGhlaWdodD0iNyIgZmlsbD0iIzZhOTJlMCIvPgo8cmVjdCB4PSI4IiB5PSI0MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjciIGZpbGw9IiMzYTYyYzAiLz4KPHRleHQgeD0iMTciIHk9IjU2IiBmb250LWZhbWlseT0ibW9ub3NwYWNlIiBmb250LXdlaWdodD0iYm9sZCIgZm9udC1zaXplPSI5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjM2MxYTgyIj5wcG08L3RleHQ+CjxyZWN0IHg9IjI4IiB5PSIzMiIgd2lkdGg9IjMzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzOCIgeT0iMjciIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzNyIgeT0iMzYiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgZmlsbD0iI2VjZTNmZCIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iNDEiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSI3IiBmaWxsPSIjM2E2MmMwIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQyIDYpIHJvdGF0ZSgwKSBzY2FsZSgwLjg1KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt=""><h2 id="h1s">1. Foto standar</h2></div>
+      <div class="kt-body">
+      <div class="drop" id="drop"><img src="assets/ic-image.png" alt="">Seret foto ke sini, atau pilih beberapa file sekaligus.</div>
+      <div class="row" style="margin-top:10px">
+        <label class="btn" for="fStd">Pilih foto standar</label>
+        <input id="fStd" type="file" accept="image/*" multiple>
+        <button class="ghost" id="demoBtn" type="button">Muat data demo</button>
+        <button id="saveBtn" type="button" title="Simpan foto standar dan nilai ppm kalibrasi"><img class="bi" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cGF0aCBkPSJNNiA2SDUwTDU4IDE0VjU4SDZaIiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNiIgeT0iNiIgd2lkdGg9IjI2IiBoZWlnaHQ9IjE2IiBmaWxsPSIjZWNlM2ZkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIzNCIgeT0iMTAiIHdpZHRoPSI1IiBoZWlnaHQ9IjkiIGZpbGw9IiMzYzFhODIiLz4KPHJlY3QgeD0iMTQiIHk9IjM0IiB3aWR0aD0iMzYiIGhlaWdodD0iMjQiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjE5IiB5PSI0MSIgd2lkdGg9IjI2IiBoZWlnaHQ9IjMiIGZpbGw9IiNhNzhiZmEiLz48cmVjdCB4PSIxOSIgeT0iNDgiIHdpZHRoPSIxOCIgaGVpZ2h0PSIzIiBmaWxsPSIjYTc4YmZhIi8+PC9zdmc+" alt="">Simpan data kalibrasi</button>
+        <button class="ghost" id="loadBtn" type="button" title="Buka data kalibrasi tersimpan"><img class="bi" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cGF0aCBkPSJNNCAxNEgyNEwzMCAyMEg2MFY1NEg0WiIgZmlsbD0iI2E3OGJmYSIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTQgMjhINjBWNTRINFoiIGZpbGw9IiNjM2E4ZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+PC9zdmc+" alt="">Buka data tersimpan</button>
+        <input id="fLoad" type="file" accept=".json,application/json">
+        <button class="ghost" id="clearBtn" type="button">Hapus semua</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <span>Isi otomatis dari</span>
+        <input id="cmin" type="number" value="0" aria-label="Konsentrasi terendah">
+        <span>sampai</span>
+        <input id="cmax" type="number" value="1000" aria-label="Konsentrasi tertinggi">
+        <input id="unit" type="text" value="ppm" style="width:70px" aria-label="Satuan">
+        <button class="ghost" id="autoBtn" type="button">Isi konsentrasi</button>
+      </div>
+      <p class="hint">Isi otomatis mengurutkan foto dari paling pucat (terendah) ke paling pekat (tertinggi) dengan jarak sama. Periksa dan ubah angkanya bila urutan foto Anda berbeda.</p>
+      <div class="row" style="margin-top:8px">
+        <label for="roi">Ukuran area baca</label>
+        <select id="roi"><option value="20">20% lebar</option><option value="40" selected>40% lebar</option><option value="60">60% lebar</option></select>
+      </div>
+      <p class="hint">Area baca awalnya di tengah strip. Klik bagian foto yang rata untuk memindahkannya, hindari tulisan angka dan tepi gelap.</p>
+      <p class="msg" id="msg1"></p>
+      <p class="toast" id="msgSave" role="status"></p>
+      <div id="cards"></div>
+      </div>
+    </section>
+
+    <section class="kt-card" id="sample" aria-labelledby="h3s">
+      <div class="kt-head"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSIyNCIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjM0IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNCIgeT0iMTciIHdpZHRoPSIxOCIgaGVpZ2h0PSI4IiBmaWxsPSIjN2MzYWVkIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIxNSIgeT0iMzEiIHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgZmlsbD0iI2VjZTNmZCIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMjEiIHk9IjM3IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiMzYTYyYzAiLz4KPHJlY3QgeD0iNDAiIHk9IjI5IiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMgMikgcm90YXRlKC0xMCkgc2NhbGUoMC44KSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+CjxwYXRoIGQ9Ik01MCAxNGg0djRoNHY0aDJ2OGgtMnY0aC00djJoLTh2LTJoLTR2LTRoLTJ2LThoMnYtNGg0di00aDR6IiBmaWxsPSIjMzhiZGY4IiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSI0NiIgeT0iMjIiIHdpZHRoPSIzIiBoZWlnaHQ9IjUiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt=""><h2 id="h3s">3. Sampel: foto atau kamera langsung</h2></div>
+      <div class="kt-body">
+      <div class="row">
+        <label class="btn" for="fSmp">Pilih foto sampel (JPG/PNG)</label>
+        <input id="fSmp" type="file" accept="image/*" multiple>
+        <label class="btn ghost" for="fCam">Foto dengan kamera HP</label>
+        <input id="fCam" type="file" accept="image/*" capture="environment">
+        <button id="liveBtn" type="button">Buka kamera langsung</button>
+        <button class="ghost" id="flipBtn" type="button" hidden>Ganti kamera</button>
+      </div>
+      <p class="hint">Kamera langsung hanya jalan lewat localhost atau https. Di HP lewat http, pakai tombol Foto dengan kamera HP.</p>
+      <p class="msg" id="msgLive"></p>
+      <video id="liveVid" playsinline muted hidden></video>
+      <div id="livePanel" hidden>
+        <canvas id="liveView" aria-label="Tampilan kamera langsung, klik untuk memindahkan area baca"></canvas>
+        <div class="livecols"><div id="liveSw"></div><div class="mono" id="liveTxt">–</div></div>
+        <p class="hint">Arahkan kamera ke larutan atau strip, lalu klik bagian yang rata untuk memindahkan kotak baca. Nilai dirata-rata dari beberapa frame terakhir.</p>
+        <div class="row">
+          <button id="snapSmp" type="button">Simpan sebagai sampel</button>
+          <input id="liveConc" type="number" step="any" placeholder="ppm standar" aria-label="Konsentrasi standar dari kamera">
+          <button class="ghost" id="snapStd" type="button">Simpan sebagai standar</button>
+        </div>
+      </div>
+      <div id="smp"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="kt-card concl" id="conclusion" aria-labelledby="hc" aria-live="polite">
+      <div class="kt-head"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iNDAiIGhlaWdodD0iNTIiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxyZWN0IHg9IjE4IiB5PSIzIiB3aWR0aD0iMjAiIGhlaWdodD0iMTAiIGZpbGw9IiM3YzNhZWQiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0xNCAyMmw0IDQgNy04IiBmaWxsPSJub25lIiBzdHJva2U9IiMxNmEzNGEiIHN0cm9rZS13aWR0aD0iMyIvPjxyZWN0IHg9IjI5IiB5PSIyMSIgd2lkdGg9IjE0IiBoZWlnaHQ9IjMiIGZpbGw9IiNhNzhiZmEiLz4KPHBhdGggZD0iTTE0IDM0bDQgNCA3LTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE2YTM0YSIgc3Ryb2tlLXdpZHRoPSIzIi8+PHJlY3QgeD0iMjkiIHk9IjMzIiB3aWR0aD0iMTQiIGhlaWdodD0iMyIgZmlsbD0iI2E3OGJmYSIvPgo8cmVjdCB4PSIxMyIgeT0iNDYiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzIiBmaWxsPSIjYTc4YmZhIi8+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM2IDM4KSByb3RhdGUoMCkgc2NhbGUoMS4xKSI+PHBhdGggZD0iTTAgMjBDMCA4IDggMCAyMCAwQzIwIDEyIDEyIDIwIDAgMjBaIiBmaWxsPSIjNGFkZTgwIiBzdHJva2U9IiMxNjY1MzQiIHN0cm9rZS13aWR0aD0iMi40Ii8+PHBhdGggZD0iTTMgMTdMMTUgNSIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+" alt=""><h2 id="hc">Kesimpulan dan saran</h2></div>
+      <div class="kt-body"><div id="concl"></div></div>
+    </section>
+    <section class="kt-card" id="calibration" aria-labelledby="h2s">
+      <div class="kt-head"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSI0IiB5PSI0IiB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIGZpbGw9IiNmN2YyZmYiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIzIi8+CjxwYXRoIGQ9Ik0xMiAyMlY1Mkg1NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjMiLz4KPHBhdGggZD0iTTE0IDQ4IEwyNCA0MyBMMzQgMzYgTDQ0IDI4IEw1MCAyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjN2MzYWVkIiBzdHJva2Utd2lkdGg9IjMiLz4KPHJlY3QgeD0iMjEiIHk9IjQwIiB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSIjYTc4YmZhIiBzdHJva2U9IiMzYzFhODIiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSIzMSIgeT0iMzMiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiIGZpbGw9IiNhNzhiZmEiIHN0cm9rZT0iIzNjMWE4MiIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxyZWN0IHg9IjEyIiB5PSI0NSIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2E3OGJmYSIgc3Ryb2tlPSIjM2MxYTgyIiBzdHJva2Utd2lkdGg9IjIiLz4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzMgNikgc2NhbGUoMS4wNSkiPjxwYXRoIGQ9Ik0xMCAyNFYxMiIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjMiLz48cGF0aCBkPSJNMTAgMTRDMiAxNCAwIDggMCA0QzYgNCAxMCA3IDEwIDE0WiIgZmlsbD0iIzRhZGU4MCIgc3Ryb2tlPSIjMTY2NTM0IiBzdHJva2Utd2lkdGg9IjIiLz48cGF0aCBkPSJNMTAgMTJDMTAgNiAxNCAyIDIwIDJDMjAgOCAxNiAxMiAxMCAxMloiIGZpbGw9IiM4NmVmYWMiIHN0cm9rZT0iIzE2NjUzNCIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9nPjwvc3ZnPg==" alt=""><h2 id="h2s">2. Kurva kalibrasi</h2></div>
+      <div class="kt-body">
+      <div class="row">
+        <label for="mode">Sinyal</label>
+        <select id="mode">
+          <option value="R">Intensitas R</option><option value="G">Intensitas G</option><option value="B">Intensitas B</option>
+          <option value="Y">Abu-abu</option>
+          <option value="AR" selected>Absorbansi R</option><option value="AG">Absorbansi G</option><option value="AB">Absorbansi B</option>
+          <option value="D">Jarak warna dari blanko</option>
+        </select>
+        <label for="deg">Model</label>
+        <select id="deg"><option value="1">Linear</option><option value="2" selected>Kuadrat</option></select>
+      </div>
+      <canvas id="chart" width="640" height="400" style="margin-top:12px"></canvas>
+      <div class="stats">
+        <div><span>Persamaan</span><b id="eq">–</b></div>
+        <div><span>R²</span><b id="r2">–</b></div>
+        <div><span>LOD</span><b id="lod">–</b></div>
+        <div><span>LOQ</span><b id="loq">–</b></div>
+      </div>
+      <p class="msg" id="msg2"></p>
+      <table><thead><tr><th>Standar</th><th>R</th><th>G</th><th>B</th><th>Sinyal</th></tr></thead><tbody id="tb"></tbody></table>
+      <div class="row" style="margin-top:10px"><button class="ghost" id="csv" type="button">Unduh CSV</button></div>
+      </div>
+    </section>
+  </div>
+</main>
+    <div class="foot">KELOMPOK 13 · RGB COLOR LAB · NUTRISI TANAMAN</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  let items = [], uid = 0;
+  const unit = () => $('unit').value || '';
+  const fmt = (v,d=3) => (v===null||v===undefined||!isFinite(v)) ? '–' : (Math.abs(v)>=1e5||(Math.abs(v)<1e-3&&v!==0)) ? v.toExponential(2) : (+v.toFixed(d)).toString();
+
+  // ---------- Memuat gambar ----------
+  function addFiles(files, sample){
+    [...files].forEach(f=>{
+      if(!f.type.startsWith('image/')) return;
+      const img = new Image();
+      img.onload = ()=>{
+        const k = Math.min(1, 900/Math.max(img.naturalWidth,img.naturalHeight));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth*k); c.height = Math.round(img.naturalHeight*k);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        URL.revokeObjectURL(img.src);
+        const it = {id:++uid, name:f.name, cv:c, conc:null, roi:{x:.5,y:.55}, sample:!!sample, rgb:null};
+        measure(it); items.push(it); build();
+      };
+      img.onerror = ()=>{ $('msg1').textContent = 'File '+f.name+' tidak bisa dibaca sebagai gambar.'; };
+      img.src = URL.createObjectURL(f);
+    });
+  }
+  function measure(it){
+    if(!it.cv) return;
+    const w = it.cv.width, h = it.cv.height, half = Math.max(2, Math.round(+$('roi').value/100*w/2));
+    const x0 = Math.max(0, Math.round(it.roi.x*w-half)), y0 = Math.max(0, Math.round(it.roi.y*h-half));
+    const x1 = Math.min(w, Math.round(it.roi.x*w+half)), y1 = Math.min(h, Math.round(it.roi.y*h+half));
+    const d = it.cv.getContext('2d').getImageData(x0,y0,Math.max(1,x1-x0),Math.max(1,y1-y0)).data;
+    let r=0,g=0,b=0,n=d.length/4;
+    for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];}
+    it.rgb = {r:r/n,g:g/n,b:b/n}; it.box = {x0,y0,x1,y1};
+  }
+  function drawThumb(it){
+    const c = it.view, g = c.getContext('2d');
+    c.width = it.cv.width; c.height = it.cv.height;
+    g.drawImage(it.cv,0,0);
+    const bx = it.box; if(!bx) return;
+    g.lineWidth = Math.max(2, c.width/120); g.strokeStyle = '#fff';
+    g.strokeRect(bx.x0,bx.y0,bx.x1-bx.x0,bx.y1-bx.y0);
+    g.lineWidth = Math.max(1, c.width/260); g.strokeStyle = '#000';
+    g.strokeRect(bx.x0-2,bx.y0-2,bx.x1-bx.x0+4,bx.y1-bx.y0+4);
+  }
+
+  // ---------- Kartu ----------
+  function build(){
+    $('cards').innerHTML = ''; $('smp').innerHTML = '';
+    items.forEach(it=>{
+      const card = document.createElement('div'); card.className = 'card';
+      if(it.cv){
+        it.view = document.createElement('canvas');
+        it.view.setAttribute('aria-label','Foto '+it.name+', klik untuk memilih area baca');
+        it.view.addEventListener('click', e=>{
+          const rc = it.view.getBoundingClientRect();
+          // canvas ditampilkan dengan object-fit: contain, hitung area gambar sebenarnya
+          const sc = Math.min(rc.width/it.cv.width, rc.height/it.cv.height);
+          const ox = (rc.width-it.cv.width*sc)/2, oy = (rc.height-it.cv.height*sc)/2;
+          const x = (e.clientX-rc.left-ox)/(it.cv.width*sc), y = (e.clientY-rc.top-oy)/(it.cv.height*sc);
+          if(x<0||x>1||y<0||y>1) return;
+          it.roi = {x,y}; measure(it); drawThumb(it); update();
+        });
+        card.appendChild(it.view);
+      }else{
+        const ph = document.createElement('div'); ph.className = 'ph'; it.ph = ph; card.appendChild(ph);
+      }
+      it.info = document.createElement('div'); it.info.className = 'mono'; card.appendChild(it.info);
+      const foot = document.createElement('div'); foot.className = 'row';
+      if(it.sample){
+        it.pred = document.createElement('div'); it.pred.className = 'pred'; foot.appendChild(it.pred);
+      }else{
+        const inp = document.createElement('input'); inp.type = 'number'; inp.step = 'any'; inp.placeholder = unit();
+        inp.setAttribute('aria-label','Konsentrasi '+it.name);
+        inp.value = it.conc===null ? '' : it.conc;
+        inp.addEventListener('input', ()=>{ it.conc = inp.value===''? null : parseFloat(inp.value); update(); });
+        it.inp = inp; foot.appendChild(inp);
+      }
+      const x = document.createElement('button'); x.className = 'x'; x.type = 'button'; x.textContent = 'Hapus';
+      x.onclick = ()=>{ items = items.filter(o=>o!==it); build(); };
+      foot.appendChild(x); card.appendChild(foot);
+      (it.sample ? $('smp') : $('cards')).appendChild(card);
+      if(it.cv) drawThumb(it);
+    });
+    update();
+  }
+
+  // ---------- Sinyal & regresi polinomial ----------
+  const blank = () => items.find(i=>!i.sample && i.conc===0 && i.rgb) || null;
+  function signal(p, bl){
+    const m = $('mode').value;
+    if(m==='R') return p.r; if(m==='G') return p.g; if(m==='B') return p.b;
+    if(m==='Y') return .2126*p.r+.7152*p.g+.0722*p.b;
+    if(!bl) return null;
+    if(m==='D') return Math.hypot(p.r-bl.rgb.r,p.g-bl.rgb.g,p.b-bl.rgb.b);
+    const k = m[1].toLowerCase();
+    return -Math.log10(Math.max(p[k],1e-6)/Math.max(bl.rgb[k],1e-6));
+  }
+  function polyfit(pts,d){
+    const n = d+1, A = Array.from({length:n},()=>Array(n+1).fill(0));
+    pts.forEach(p=>{
+      for(let i=0;i<n;i++){ for(let j=0;j<n;j++) A[i][j]+=Math.pow(p.x,i+j); A[i][n]+=p.y*Math.pow(p.x,i); }
+    });
+    for(let i=0;i<n;i++){
+      let mx=i; for(let r=i+1;r<n;r++) if(Math.abs(A[r][i])>Math.abs(A[mx][i])) mx=r;
+      [A[i],A[mx]]=[A[mx],A[i]];
+      if(Math.abs(A[i][i])<1e-14) return null;
+      for(let r=i+1;r<n;r++){ const f=A[r][i]/A[i][i]; for(let c=i;c<=n;c++) A[r][c]-=f*A[i][c]; }
+    }
+    const co = Array(n).fill(0);
+    for(let i=n-1;i>=0;i--){ let s=A[i][n]; for(let j=i+1;j<n;j++) s-=A[i][j]*co[j]; co[i]=s/A[i][i]; }
+    return co; // c0 + c1 x + c2 x^2
+  }
+  const ev = (co,x) => co.reduce((a,c,i)=>a+c*Math.pow(x,i),0);
+  function fit(){
+    const bl = blank(), d = +$('deg').value;
+    const pts = items.filter(i=>!i.sample && i.rgb && i.conc!==null && isFinite(i.conc))
+      .map(i=>({x:i.conc, y:signal(i.rgb,bl), it:i})).filter(p=>p.y!==null && isFinite(p.y));
+    const distinct = new Set(pts.map(p=>p.x)).size;
+    if(pts.length<d+1 || distinct<d+1) return {pts, ok:false, d};
+    const co = polyfit(pts,d); if(!co) return {pts, ok:false, d};
+    const my = pts.reduce((a,p)=>a+p.y,0)/pts.length;
+    const sse = pts.reduce((a,p)=>a+(p.y-ev(co,p.x))**2,0), sst = pts.reduce((a,p)=>a+(p.y-my)**2,0);
+    const s = pts.length>d+1 ? Math.sqrt(sse/(pts.length-d-1)) : null;
+    return {pts, ok:true, d, co, r2: sst===0?1:1-sse/sst, s};
+  }
+  function invert(f,y){
+    const c = f.co, xs = f.pts.map(p=>p.x), lo=Math.min(...xs), hi=Math.max(...xs);
+    let cand = [];
+    if(f.d===1){ if(c[1]!==0) cand=[(y-c[0])/c[1]]; }
+    else{
+      const a=c[2], b=c[1], cc=c[0]-y;
+      if(Math.abs(a)<1e-14){ if(b!==0) cand=[-cc/b]; }
+      else{ const D=b*b-4*a*cc; if(D>=0){ const q=Math.sqrt(D); cand=[(-b+q)/(2*a),(-b-q)/(2*a)]; } }
+    }
+    if(!cand.length) return null;
+    const dist = x => x<lo ? lo-x : x>hi ? x-hi : 0;
+    cand.sort((p,q)=>dist(p)-dist(q));
+    return cand[0];
+  }
+
+  // ---------- Pembaruan tampilan ----------
+  function update(){
+    const bl = blank(), f = fit();
+    items.forEach(it=>{
+      if(it.info && it.rgb){
+        const hex = [it.rgb.r,it.rgb.g,it.rgb.b].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+        it.info.innerHTML = `<span class="chip" style="background:#${hex}"></span>${it.rgb.r.toFixed(0)}, ${it.rgb.g.toFixed(0)}, ${it.rgb.b.toFixed(0)}`;
+        if(it.ph){ it.ph.style.background = '#'+hex; it.ph.textContent = it.name; it.ph.style.color = (it.rgb.r+it.rgb.g+it.rgb.b)/3>150?'#13222e':'#fff'; }
+      }
+      if(it.sample && it.pred){
+        const y = it.rgb ? signal(it.rgb,bl) : null;
+        const x = (f.ok && y!==null) ? invert(f,y) : null;
+        it.sampleX = x; it.sampleY = y;
+        const xs = f.pts.map(p=>p.x);
+        const out = x!==null && f.ok && (x<Math.min(...xs)||x>Math.max(...xs));
+        it.pred.innerHTML = x===null ? '<span class="hint">Kalibrasi belum siap</span>' : fmt(x,1)+' '+unit()+(out?'<div class="hint">Di luar rentang standar</div>':'');
+      }
+    });
+    // pesan
+    const needBlank = ['AR','AG','AB','D'].includes($('mode').value) && !bl;
+    $('msg2').textContent = needBlank ? 'Mode ini butuh standar berkonsentrasi 0. Isi konsentrasi atau pilih mode intensitas.' :
+      (!f.ok ? 'Isi konsentrasi minimal '+(f.d+1)+' standar yang berbeda.' : (f.pts.length<5?'Disarankan minimal 5 titik standar.':''));
+    if(f.ok){
+      const c=f.co, t = f.d===1 ? `y = ${fmt(c[1],5)}x ${c[0]<0?'−':'+'} ${fmt(Math.abs(c[0]),4)}`
+        : `y = ${fmt(c[2],8)}x² ${c[1]<0?'−':'+'} ${fmt(Math.abs(c[1]),6)}x ${c[0]<0?'−':'+'} ${fmt(Math.abs(c[0]),4)}`;
+      $('eq').textContent = t; $('r2').textContent = f.r2.toFixed(4);
+      const slope0 = Math.abs(c[1]);
+      $('lod').textContent = (f.s && slope0>0) ? fmt(3.3*f.s/slope0,1)+' '+unit() : '–';
+      $('loq').textContent = (f.s && slope0>0) ? fmt(10*f.s/slope0,1)+' '+unit() : '–';
+    }else ['eq','r2','lod','loq'].forEach(i=>$(i).textContent='–');
+    $('tb').innerHTML = f.pts.slice().sort((a,b)=>a.x-b.x).map(p=>`<tr><td>${fmt(p.x,1)} ${unit()}</td><td>${p.it.rgb.r.toFixed(1)}</td><td>${p.it.rgb.g.toFixed(1)}</td><td>${p.it.rgb.b.toFixed(1)}</td><td>${fmt(p.y,4)}</td></tr>`).join('');
+    // sinyal kamera langsung
+    live.sampleY = (live.on && live.rgb) ? signal(live.rgb,bl) : null;
+    live.sampleX = (f.ok && live.sampleY!==null) ? invert(f,live.sampleY) : null;
+    if(live.on && live.rgb){
+      const r=live.rgb, hx=[r.r,r.g,r.b].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+      $('liveSw').style.background='#'+hx;
+      $('liveTxt').innerHTML='RGB '+r.r.toFixed(0)+', '+r.g.toFixed(0)+', '+r.b.toFixed(0)+'<br><b style="font-size:18px">'+(live.sampleX!=null?'≈ '+fmt(live.sampleX,0)+' '+unit():'kalibrasi belum siap')+'</b>';
+    }
+    conclude(f);
+    chart(f);
+  }
+  function chart(f){
+    const c=$('chart'), g=c.getContext('2d'), W=c.width, H=c.height, css=getComputedStyle(document.documentElement);
+    const ink=css.getPropertyValue('--ink').trim(), mute=css.getPropertyValue('--mute').trim(), line=css.getPropertyValue('--line').trim(),
+          acc=css.getPropertyValue('--accent').trim(), warn=css.getPropertyValue('--warn').trim();
+    g.clearRect(0,0,W,H);
+    const L=64,R=18,T=18,B=48;
+    if(!f.pts.length){ g.fillStyle=mute; g.font='15px sans-serif'; g.textAlign='left'; g.fillText('Belum ada standar bernilai konsentrasi',L,H/2); return; }
+    const smp = items.filter(i=>i.sample && i.sampleX!=null && i.sampleY!=null).concat(live.on && live.sampleX!=null && live.sampleY!=null ? [live] : []);
+    let xs=f.pts.map(p=>p.x).concat(smp.map(s=>s.sampleX)), ys=f.pts.map(p=>p.y).concat(smp.map(s=>s.sampleY));
+    let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+    if(x0===x1){x0-=1;x1+=1} if(y0===y1){y0-=1;y1+=1}
+    const px=(x1-x0)*.06, py=(y1-y0)*.12; x0-=px;x1+=px;y0-=py;y1+=py;
+    const X=v=>L+(v-x0)/(x1-x0)*(W-L-R), Y=v=>H-B-(v-y0)/(y1-y0)*(H-T-B);
+    g.lineWidth=1; g.strokeStyle=line; g.font='12px monospace';
+    for(let i=0;i<=4;i++){
+      const vx=x0+(x1-x0)*i/4, vy=y0+(y1-y0)*i/4;
+      g.beginPath();g.moveTo(X(vx),T);g.lineTo(X(vx),H-B);g.stroke();
+      g.beginPath();g.moveTo(L,Y(vy));g.lineTo(W-R,Y(vy));g.stroke();
+      g.fillStyle=mute; g.textAlign='center'; g.fillText(fmt(vx,0),X(vx),H-B+16);
+      g.textAlign='right'; g.fillText(fmt(vy,3),L-6,Y(vy)+4);
+    }
+    g.fillStyle=ink; g.font='13px sans-serif'; g.textAlign='center';
+    g.fillText('Konsentrasi ('+unit()+')',(L+W-R)/2,H-8);
+    g.save(); g.translate(14,(T+H-B)/2); g.rotate(-Math.PI/2); g.fillText('Sinyal',0,0); g.restore();
+    if(f.ok){
+      g.strokeStyle=acc; g.lineWidth=2; g.beginPath();
+      for(let i=0;i<=80;i++){ const x=x0+(x1-x0)*i/80, y=ev(f.co,x); i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y)); }
+      g.stroke();
+    }
+    f.pts.forEach(p=>{ g.fillStyle=ink; g.beginPath(); g.arc(X(p.x),Y(p.y),5,0,7); g.fill(); });
+    smp.forEach(s=>{
+      g.strokeStyle=warn; g.setLineDash([5,4]); g.lineWidth=1.5;
+      g.beginPath(); g.moveTo(L,Y(s.sampleY)); g.lineTo(X(s.sampleX),Y(s.sampleY)); g.lineTo(X(s.sampleX),H-B); g.stroke(); g.setLineDash([]);
+      g.fillStyle=warn; g.beginPath(); g.arc(X(s.sampleX),Y(s.sampleY),6,0,7); g.fill();
+    });
+  }
+
+
+  // ---------- Kamera langsung ----------
+  const live = {on:false, stream:null, roi:{x:.5,y:.5}, rgb:null, buf:[], facing:'environment', sampleX:null, sampleY:null, raf:0, last:0, raw:document.createElement('canvas')};
+  const vid=$('liveVid'), lv=$('liveView'), lg=lv.getContext('2d');
+  const rg=live.raw.getContext('2d',{willReadFrequently:true});
+  function roiBox(w,h,roi){
+    const half=Math.max(2,Math.round(+$('roi').value/100*w/2));
+    return {x0:Math.max(0,Math.round(roi.x*w-half)), y0:Math.max(0,Math.round(roi.y*h-half)),
+            x1:Math.min(w,Math.round(roi.x*w+half)), y1:Math.min(h,Math.round(roi.y*h+half))};
+  }
+  async function startLive(){
+    if(!navigator.mediaDevices || !window.isSecureContext){
+      $('msgLive').textContent='Kamera langsung butuh localhost atau https. Buka lewat Live Server di VS Code, atau pakai tombol Foto dengan kamera HP.'; return;
+    }
+    try{
+      stopStream();
+      live.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:live.facing,width:{ideal:1280}},audio:false});
+      vid.srcObject=live.stream; await vid.play();
+      live.on=true; live.buf=[];
+      $('livePanel').hidden=false; $('liveBtn').textContent='Tutup kamera'; $('flipBtn').hidden=false; $('msgLive').textContent='';
+      live.raf=requestAnimationFrame(loop);
+    }catch(err){
+      $('msgLive').textContent='Kamera tidak bisa dibuka: '+(err.name==='NotAllowedError'?'izin kamera ditolak di browser.':err.message);
+      stopLive();
+    }
+  }
+  function stopStream(){ if(live.stream){live.stream.getTracks().forEach(t=>t.stop()); live.stream=null;} cancelAnimationFrame(live.raf); }
+  function stopLive(){
+    stopStream(); live.on=false; live.rgb=null; live.sampleX=live.sampleY=null;
+    $('livePanel').hidden=true; $('liveBtn').textContent='Buka kamera langsung'; $('flipBtn').hidden=true; update();
+  }
+  function loop(t){
+    live.raf=requestAnimationFrame(loop);
+    if(!vid.videoWidth || t-live.last<200) return;
+    live.last=t;
+    const k=Math.min(1,640/vid.videoWidth), w=Math.round(vid.videoWidth*k), h=Math.round(vid.videoHeight*k);
+    if(live.raw.width!==w||live.raw.height!==h){ live.raw.width=w; live.raw.height=h; lv.width=w; lv.height=h; }
+    rg.drawImage(vid,0,0,w,h);
+    const b=roiBox(w,h,live.roi), d=rg.getImageData(b.x0,b.y0,Math.max(1,b.x1-b.x0),Math.max(1,b.y1-b.y0)).data;
+    let r=0,g=0,bl=0,n=d.length/4;
+    for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];bl+=d[i+2];}
+    live.buf.push({r:r/n,g:g/n,b:bl/n}); if(live.buf.length>5) live.buf.shift();
+    const m=live.buf.length;
+    live.rgb={r:live.buf.reduce((a,v)=>a+v.r,0)/m, g:live.buf.reduce((a,v)=>a+v.g,0)/m, b:live.buf.reduce((a,v)=>a+v.b,0)/m};
+    lg.drawImage(live.raw,0,0);
+    lg.lineWidth=3; lg.strokeStyle='#fff'; lg.strokeRect(b.x0,b.y0,b.x1-b.x0,b.y1-b.y0);
+    lg.lineWidth=1; lg.strokeStyle='#000'; lg.strokeRect(b.x0-2,b.y0-2,b.x1-b.x0+4,b.y1-b.y0+4);
+    update();
+  }
+  lv.addEventListener('click',e=>{
+    const rc=lv.getBoundingClientRect(), sc=Math.min(rc.width/lv.width,rc.height/lv.height);
+    const ox=(rc.width-lv.width*sc)/2, oy=(rc.height-lv.height*sc)/2;
+    const x=(e.clientX-rc.left-ox)/(lv.width*sc), y=(e.clientY-rc.top-oy)/(lv.height*sc);
+    if(x<0||x>1||y<0||y>1) return;
+    live.roi={x,y}; live.buf=[];
+  });
+  function snap(asSample){
+    if(!live.on||!live.raw.width) return;
+    let conc=null;
+    if(!asSample){
+      conc=parseFloat($('liveConc').value);
+      if(!isFinite(conc)){ $('msgLive').textContent='Isi konsentrasi standar sebelum menyimpan.'; return; }
+    }
+    $('msgLive').textContent='';
+    const c=document.createElement('canvas'); c.width=live.raw.width; c.height=live.raw.height;
+    c.getContext('2d').drawImage(live.raw,0,0);
+    const it={id:++uid,name:'Kamera '+new Date().toLocaleTimeString('id-ID'),cv:c,conc:asSample?null:conc,roi:{...live.roi},sample:asSample,rgb:null};
+    measure(it); items.push(it); if(!asSample) $('liveConc').value=''; build();
+  }
+
+  // ---------- Kesimpulan ----------
+  function target(){
+    if(live.on && live.rgb) return {rgb:live.rgb, src:'kamera langsung'};
+    const s=items.filter(i=>i.sample && i.rgb).pop();
+    return s ? {rgb:s.rgb, src:'foto '+s.name} : null;
+  }
+  function conclude(f){
+    const box=$('concl'), tg=target();
+    if(!tg){ box.innerHTML='<p class="hint">Unggah foto sampel atau buka kamera langsung. Kesimpulan kisaran konsentrasi muncul di sini.</p>'; return; }
+    const bl=blank(), y=signal(tg.rgb,bl), u=unit();
+    if(!f.ok || y===null){
+      box.innerHTML='<p class="hint">Kalibrasi belum siap. Isi konsentrasi minimal '+(f.d+1)+' standar yang berbeda'+(['AR','AG','AB','D'].includes($('mode').value)?', termasuk standar 0 untuk mode ini':'')+'.</p>'; return;
+    }
+    const x=invert(f,y);
+    if(x===null){ box.innerHTML='<p class="w">Warna sampel tidak bisa dipetakan ke kurva kalibrasi. Coba model Linear atau sinyal lain.</p>'; return; }
+    const pts=f.pts.slice().sort((a,b)=>a.x-b.x), lo=pts[0].x, hi=pts[pts.length-1].x, c=f.co;
+    const slope=c[1]+(f.d===2?2*c[2]*x:0);
+    const unc=(f.s && Math.abs(slope)>1e-12) ? 2*f.s/Math.abs(slope) : null;
+    const step=(hi-lo)>=200?10:1, rnd=v=>Math.round(v/step)*step;
+    const below=[...pts].reverse().find(p=>p.x<=x), above=pts.find(p=>p.x>=x);
+    let a,b,basis;
+    if(unc!==null){ a=Math.max(x-unc,Math.min(0,lo)); b=x+unc; basis='±2 simpangan residu kalibrasi'; }
+    else if(below&&above){ a=below.x; b=above.x; basis='diapit dua standar terdekat (data kurang untuk estimasi galat)'; }
+    else{ a=b=x; basis='ekstrapolasi'; }
+    let near=null, nd=1e9;
+    pts.forEach(p=>{ const d=Math.hypot(tg.rgb.r-p.it.rgb.r,tg.rgb.g-p.it.rgb.g,tg.rgb.b-p.it.rgb.b); if(d<nd){nd=d;near=p;} });
+    const t=(x-lo)/((hi-lo)||1);
+    const cat=t<0.2?'sangat rendah (mendekati blanko)':t<0.45?'rendah':t<0.7?'sedang':'tinggi';
+    const lod=(f.s && Math.abs(c[1])>0)?3.3*f.s/Math.abs(c[1]):null;
+    const notes=[];
+    if(x<lo) notes.push('Di bawah standar terendah ('+fmt(lo,0)+' '+u+'). Nilai ini ekstrapolasi.');
+    if(x>hi) notes.push('Di atas standar tertinggi ('+fmt(hi,0)+' '+u+'). Encerkan sampel atau tambah standar yang lebih pekat.');
+    if(lod!==null && x<lod) notes.push('Di bawah batas deteksi (LOD '+fmt(lod,0)+' '+u+'), belum bisa dibedakan dari blanko.');
+    if(f.r2<0.95) notes.push('R² kalibrasi '+f.r2.toFixed(3)+' kurang baik, kisaran ini kurang andal. Perbaiki pencahayaan atau coba model Kuadrat.');
+    if(f.pts.length<5) notes.push('Titik standar baru '+f.pts.length+', disarankan minimal 5.');
+    const range = (rnd(a)===rnd(b)) ? '' : 'Kisaran '+fmt(rnd(a),0)+' – '+fmt(rnd(b),0)+' '+u+' ('+basis+').';
+    const hx=[tg.rgb.r,tg.rgb.g,tg.rgb.b].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+    box.innerHTML=
+      '<div class="big">≈ '+fmt(rnd(x),0)+' '+u+'</div>'+
+      '<p>Dari '+tg.src+', RGB '+tg.rgb.r.toFixed(0)+', '+tg.rgb.g.toFixed(0)+', '+tg.rgb.b.toFixed(0)+' <span class="chip" style="background:#'+hx+';margin-left:6px"></span></p>'+
+      (range?'<p>'+range+'</p>':'')+
+      (below&&above&&below!==above?'<p>Terletak antara standar '+fmt(below.x,0)+' dan '+fmt(above.x,0)+' '+u+'.</p>':'')+
+      '<p>Warna paling mirip standar '+fmt(near.x,0)+' '+u+'. Tingkat konsentrasi: '+cat+' relatif terhadap rentang standar '+fmt(lo,0)+'–'+fmt(hi,0)+' '+u+'.</p>'+
+      notes.map(n=>'<p class="w">'+n+'</p>').join('');
+  }
+
+  // ---------- Aksi ----------
+  $('fStd').addEventListener('change', e=>{ addFiles(e.target.files,false); e.target.value=''; });
+  $('fSmp').addEventListener('change', e=>{ addFiles(e.target.files,true); e.target.value=''; });
+  $('fCam').addEventListener('change', e=>{ addFiles(e.target.files,true); e.target.value=''; });
+  $('liveBtn').addEventListener('click', ()=>{ live.on ? stopLive() : startLive(); });
+  $('flipBtn').addEventListener('click', ()=>{ live.facing = live.facing==='environment' ? 'user' : 'environment'; startLive(); });
+  $('snapSmp').addEventListener('click', ()=>snap(true));
+  $('snapStd').addEventListener('click', ()=>snap(false));
+  const drop=$('drop');
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('on');}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('on');}));
+  drop.addEventListener('drop', e=>addFiles(e.dataTransfer.files,false));
+  $('roi').addEventListener('change', ()=>{ live.buf=[]; items.forEach(it=>{measure(it); if(it.view) drawThumb(it);}); update(); });
+  $('mode').addEventListener('change', update);
+  $('deg').addEventListener('change', update);
+  $('unit').addEventListener('input', ()=>{ update(); });
+  $('autoBtn').addEventListener('click', ()=>{
+    const std = items.filter(i=>!i.sample && i.rgb);
+    if(std.length<2){ $('msg1').textContent='Unggah minimal 2 foto standar dulu.'; return; }
+    $('msg1').textContent='';
+    const lum = i=>i.rgb.r+i.rgb.g+i.rgb.b;
+    const lo=parseFloat($('cmin').value), hi=parseFloat($('cmax').value);
+    std.sort((a,b)=>lum(b)-lum(a)).forEach((it,k)=>{ it.conc = lo+(hi-lo)*k/(std.length-1); });
+    build();
+  });
+  $('demoBtn').addEventListener('click', ()=>{
+    const demo=[[0,246.4,248.4,247.3],[250,241.8,244.0,242.7],[500,217.2,227.3,226.8],[750,162.1,193.0,205.7],[1000,116.4,158.1,176.2]];
+    items = items.filter(i=>!i.demo);
+    demo.forEach(d=>items.push({id:++uid,name:d[0]+' '+unit(),demo:true,conc:d[0],rgb:{r:d[1],g:d[2],b:d[3]},sample:false}));
+    build();
+  });
+  $('clearBtn').addEventListener('click', ()=>{ items=[]; $('msg1').textContent=''; build(); });
+  $('csv').addEventListener('click', ()=>{
+    const f=fit(), rows=[['konsentrasi','R','G','B','sinyal_'+$('mode').value]]
+      .concat(f.pts.map(p=>[p.x,p.it.rgb.r.toFixed(2),p.it.rgb.g.toFixed(2),p.it.rgb.b.toFixed(2),p.y]));
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('\n')],{type:'text/csv'}));
+    a.download='kalibrasi-rgb.csv'; a.click();
+  });
+
+  // ---------- Simpan / buka data kalibrasi (foto + ppm) ----------
+  const KEY='rgb-lab-kalibrasi-v1';
+  function snapshot(){
+    return {v:1, saved:new Date().toISOString(),
+      set:{mode:$('mode').value,deg:$('deg').value,unit:$('unit').value,cmin:$('cmin').value,cmax:$('cmax').value,roi:$('roi').value},
+      items:items.map(it=>({name:it.name,conc:it.conc,sample:!!it.sample,demo:!!it.demo,roi:it.roi||null,
+        rgb:it.cv?null:it.rgb, img:it.cv?it.cv.toDataURL('image/jpeg',0.85):null}))};
+  }
+  function saveData(){
+    if(!items.length){ $('msgSave').style.color='#b45309'; $('msgSave').textContent='Belum ada data untuk disimpan. Unggah foto standar atau muat data demo dulu.'; return; }
+    const data=JSON.stringify(snapshot());
+    let local=true; try{ localStorage.setItem(KEY,data); }catch(e){ local=false; }
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));
+    a.download='data-kalibrasi-ppm.json'; a.click();
+    const nStd=items.filter(i=>!i.sample).length, nSmp=items.length-nStd;
+    $('msgSave').style.color='#4d7c0f';
+    $('msgSave').textContent='Tersimpan: '+nStd+' standar (foto dan ppm) dan '+nSmp+' sampel'+(local?' di browser ini':'')+'. Salinan file JSON ikut diunduh.';
+  }
+  function restore(d){
+    if(!d||!Array.isArray(d.items)) throw new Error('format');
+    const s=d.set||{};
+    ['mode','deg','unit','cmin','cmax','roi'].forEach(k=>{ if(s[k]!==undefined && $(k)) $(k).value=s[k]; });
+    items=[]; build();
+    let pending=d.items.length;
+    const done=()=>{ if(--pending<=0){ build(); $('msgSave').style.color='#4d7c0f'; $('msgSave').textContent='Data kalibrasi dimuat ('+d.items.length+' foto/titik).'; } };
+    if(!pending){ build(); return; }
+    d.items.forEach((o,idx)=>{
+      const base={id:++uid,name:o.name,conc:o.conc,sample:!!o.sample,demo:!!o.demo,roi:o.roi||{x:.5,y:.55},rgb:o.rgb||null,_i:idx};
+      if(!o.img){ items.push(base); done(); return; }
+      const im=new Image();
+      im.onload=()=>{
+        const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight;
+        c.getContext('2d').drawImage(im,0,0); base.cv=c; measure(base); items.push(base); items.sort((a,b)=>a._i-b._i); done();
+      };
+      im.onerror=done; im.src=o.img;
+    });
+  }
+  $('saveBtn').addEventListener('click', saveData);
+  $('loadBtn').addEventListener('click', ()=>{
+    let raw=null; try{ raw=localStorage.getItem(KEY); }catch(e){}
+    if(raw){ try{ restore(JSON.parse(raw)); return; }catch(e){} }
+    $('fLoad').click();
+  });
+  $('fLoad').addEventListener('change', e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=()=>{ try{ restore(JSON.parse(r.result)); }catch(err){ $('msgSave').style.color='#b45309'; $('msgSave').textContent='File tidak dikenali sebagai data kalibrasi.'; } };
+    r.readAsText(f); e.target.value='';
+  });
+  window.__rgbSave=saveData;
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', update);
+  build();
+})();
+</script>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  /* ---- bumi pixel ---- */
+  const P={NA:[[-168,66],[-156,71],[-125,70],[-95,74],[-80,70],[-62,58],[-56,50],[-66,44],[-75,38],[-81,31],[-80,25],[-90,29],[-97,26],[-97,19],[-88,16],[-83,9],[-78,8],[-85,12],[-95,16],[-106,23],[-112,30],[-118,33],[-124,40],[-125,49],[-135,58],[-150,60],[-165,62]],
+  GL:[[-73,78],[-55,83],[-25,82],[-20,72],[-40,62],[-50,65],[-60,70]],
+  SA:[[-78,8],[-70,12],[-60,10],[-50,0],[-35,-6],[-39,-15],[-48,-26],[-58,-38],[-65,-42],[-68,-53],[-73,-50],[-72,-35],[-71,-18],[-81,-5],[-80,0]],
+  EA:[[-10,36],[-9,43],[-2,48],[-5,52],[5,58],[10,64],[20,70],[40,68],[70,73],[100,77],[140,72],[170,68],[180,65],[160,58],[142,52],[135,43],[122,40],[122,30],[110,20],[108,12],[100,8],[104,1],[98,12],[92,22],[80,14],[77,8],[72,20],[66,25],[57,26],[50,30],[44,13],[35,28],[34,32],[28,36],[26,40],[20,40],[16,38],[10,44],[3,43],[-5,36]],
+  AF:[[-17,21],[-10,35],[10,37],[32,31],[35,28],[43,12],[51,12],[40,-3],[40,-15],[33,-26],[20,-35],[14,-28],[12,-5],[9,4],[-8,4],[-17,14]],
+  AU:[[114,-22],[122,-18],[130,-12],[142,-11],[146,-19],[153,-27],[150,-37],[140,-38],[130,-32],[115,-34]],
+  SU:[[95,5],[106,-6],[104,-6],[98,0]],BO:[[109,2],[117,7],[119,1],[116,-4],[110,-3]],JA:[[106,-6],[114,-8],[106,-7.5]],SL:[[119,1],[125,1],[121,-3],[120,-5]],
+  AN:[[-180,-72],[180,-72],[180,-90],[-180,-90]]};
+  const inPoly=(x,y,p)=>{let c=false;for(let i=0,j=p.length-1;i<p.length;j=i++){const a=p[i],b=p[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])c=!c}return c};
+  const LW=180,LH=90,land=new Uint8Array(LW*LH);
+  for(let j=0;j<LH;j++)for(let i=0;i<LW;i++){const lon=i*2-179,lat=89-j*2;for(const k in P)if(inPoly(lon,lat,P[k])){land[j*LW+i]=1;break}}
+  const cv=$('globe'),g=cv.getContext('2d'),N=56,R=26,img=g.createImageData(N,N);
+  const OC=[[44,86,200],[62,115,230],[96,150,250]],LC=[[46,128,48],[84,178,66],[134,214,100]],ED=[60,26,130];
+  let rot=0;
+  function draw(){
+    const d=img.data;d.fill(0);
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+      const nx=(x+.5-N/2)/R,ny=(y+.5-N/2)/R,r2=nx*nx+ny*ny;if(r2>1)continue;
+      const nz=Math.sqrt(1-r2),o=(y*N+x)*4;let c;
+      if(r2>.86){c=ED}else{
+        const lat=Math.asin(-ny)*57.2958,lon=Math.atan2(nx,nz)*57.2958+rot;
+        let li=Math.floor(((((lon+180)%360)+360)%360)/2),lj=Math.min(LH-1,Math.max(0,Math.floor((90-lat)/2)));
+        const sh=-.45*nx-.45*ny+.8*nz,lv=sh>.62?2:sh>.25?1:0;
+        c=land[lj*LW+Math.min(LW-1,li)]?(lat<-66?[235,230,255]:LC[lv]):OC[lv];
+      }
+      d[o]=c[0];d[o+1]=c[1];d[o+2]=c[2];d[o+3]=255;
+    }
+    g.putImageData(img,0,0);
+  }
+  draw();
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setInterval(()=>{rot=(rot+4)%360;draw()},110);
+  /* ---- scroll spy + label ---- */
+  const links=[...document.querySelectorAll('[data-nav]')],lab=$('orbitLabel');
+  const setOn=h=>{links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')===h));const a=links.find(a=>a.getAttribute('href')===h);if(a)lab.textContent=a.dataset.label};
+  const secs=['#home','#standard','#sample','#calibration','#conclusion'].map(s=>document.querySelector(s));
+  if('IntersectionObserver' in window){const ob=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)setOn('#'+e.target.id)}),{rootMargin:'-30% 0px -55% 0px'});secs.forEach(s=>s&&ob.observe(s))}
+  setOn('#home');
+  links.forEach(a=>{
+    a.addEventListener('mouseenter',()=>lab.textContent=a.dataset.label);
+    a.addEventListener('click',e=>{
+      const t=document.querySelector(a.getAttribute('href'));if(!t)return;
+      e.preventDefault();setOn(a.getAttribute('href'));document.body.classList.remove('nav-open');
+      if(window.__rgbLenis)window.__rgbLenis.scrollTo(t,{offset:-84});else t.scrollIntoView({behavior:'smooth'});
+    });
+  });
+  $('burger').onclick=()=>document.body.classList.toggle('nav-open');
+  $('scrim').onclick=()=>document.body.classList.remove('nav-open');
+  $('hDemo').onclick=()=>$('demoBtn').click();
+  $('hSave').onclick=()=>window.__rgbSave&&window.__rgbSave();
+  $('hCsv').onclick=()=>$('csv').click();
+  /* ---- cermin nilai ke KPI ---- */
+  const kp=()=>{$('kS').textContent=$('cards').querySelectorAll('.card').length;$('kP').textContent=$('smp').querySelectorAll('.card').length;$('kR').textContent=$('r2').textContent;$('kL').textContent=$('lod').textContent};
+  const mo=new MutationObserver(kp);
+  ['cards','smp','r2','lod'].forEach(id=>mo.observe($(id),{childList:true,subtree:true,characterData:true}));
+  kp();
+})();
+</script>
+<script type="module">
+import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm";
+const go=()=>animate(document.querySelectorAll(".hero,.kpi,.kt-card"),{opacity:[0,1],y:[18,0]},{duration:.7,delay:stagger(.07),easing:[.22,.8,.2,1]});
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go,{once:true});else go();
+</script>
+<script>
+window.addEventListener("load",()=>{
+  if(window.gsap)gsap.from(".sb-brand,.orbit-wrap",{x:-24,opacity:0,duration:.8,ease:"power3.out",stagger:.12});
+  if(window.Lenis){
+    const lenis=new Lenis({duration:1.05,smoothWheel:true,wheelMultiplier:.9});
+    window.__rgbLenis=lenis;
+    const raf=t=>{lenis.raf(t);requestAnimationFrame(raf)};requestAnimationFrame(raf);
+  }
+});
+</script>
+<script>
+(function(){
+  var fx=document.getElementById('fx'),hero=document.getElementById('home'); if(!fx)return;
+  var W=1522,H=640,h='';
+  var star='<svg viewBox="0 0 24 24" shape-rendering="crispEdges"><path d="M12 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" fill="#c4b5fd" stroke="#6d28d9" stroke-width="1"/></svg>';
+  var leafSvg=function(c){return '<svg viewBox="0 0 24 24"><path d="M2 22C2 10 10 2 22 2C22 14 14 22 2 22Z" fill="'+c+'" stroke="#166534" stroke-width="1.6"/><path d="M5 19L17 7" stroke="#166534" stroke-width="1.4"/></svg>'};
+  h+='<i class="shine"></i>';
+  [[290,153,22,3.2,0],[1053,113,26,3.8,1.1],[1135,157,16,2.6,.5],[1207,268,20,3.4,1.8],[96,285,22,3,2.4],[1330,120,14,2.8,.9]].forEach(function(p){
+    h+='<i class="sp" style="left:'+(p[0]/W*100)+'%;top:'+(p[1]/H*100)+'%;--s:'+p[2]+'px;--d:'+p[3]+'s;--l:'+p[4]+'s">'+star+'</i>';});
+  [[72,'#38bdf8'],[130,'#a855f7'],[185,'#4ade80']].forEach(function(t,ti){
+    for(var n=0;n<4;n++) h+='<i class="bb" style="left:'+((t[0]+(n%2?5:-5))/W*100)+'%;top:78%;--c:'+t[1]+';--s:'+(6+n*2)+'px;--d:'+(2.4+n*.5)+'s;--l:'+(ti*.5+n*.7)+'s;--x:'+(n%2?8:-8)+'px"></i>';});
+  var cols=['#4ade80','#86efac','#c4b5fd','#4ade80','#a78bfa','#86efac','#4ade80'];
+  for(var n=0;n<7;n++) h+='<i class="lf" style="--x:'+(8+n*13)+'%;--s:'+(20+(n%3)*8)+'px;--d:'+(13+n*2)+'s;--l:'+(n*1.9)+'s">'+leafSvg(cols[n])+'</i>';
+  for(var m=0;m<7;m++) h+='<i class="ff" style="left:'+((1190+m*28)/W*100)+'%;top:'+((430+(m%3)*45)/H*100)+'%;--d:'+(5+m*.7)+'s;--l:'+(m*.8)+'s;--x:'+((m%2?1:-1)*(10+m*2))+'px"></i>';
+  fx.innerHTML=h;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var pz=hero.querySelector('.pz');
+  hero.addEventListener('pointermove',function(e){
+    var r=hero.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+    pz.style.transform='scale(1.04) translate('+(-x*16).toFixed(1)+'px,'+(-y*9).toFixed(1)+'px)';
+    fx.style.transform='translate('+(x*10).toFixed(1)+'px,'+(y*6).toFixed(1)+'px)';
+  });
+  hero.addEventListener('pointerleave',function(){pz.style.transform='';fx.style.transform='';});
+})();
+</script>
+</body>
+</html>

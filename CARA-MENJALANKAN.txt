@@ -1,0 +1,30 @@
+CARA MENJALANKAN DI VISUAL STUDIO CODE
+1. Ekstrak ZIP, lalu di VS Code pilih File > Open Folder > folder RGB-Color-Lab.
+2. Pasang ekstensi "Live Server" (Ritwick Dey) bila belum ada.
+3. Klik kanan index.html > Open with Live Server.
+   (Kamera langsung hanya jalan lewat localhost/https, jadi Live Server disarankan.)
+4. Butuh internet untuk font (Press Start 2P, VT323) dan animasi (GSAP, Lenis).
+   Tanpa internet halaman tetap jalan, hanya font/animasi memakai bawaan.
+
+ISI ASSET (folder assets/):
+hero-bg.png   banner poster tanpa tulisan judul (judul dibuat hidup di index.html)
+hero.png      banner poster lengkap (cadangan)
+badge13.png   lencana Kelompok 13
+ic-image.png  ikon area unggah foto
+Ikon menu (Dashboard, Foto Standar, Foto Sampel, Kurva, Kesimpulan, Simpan, Buka)
+sudah tertanam di index.html, jadi tidak butuh file gambar lagi.
+
+FITUR SIMPAN DATA KALIBRASI:
+- Tombol "Simpan data kalibrasi" (kartu 1 dan header) menyimpan foto standar,
+  nilai ppm, dan pengaturan ke browser, plus mengunduh data-kalibrasi-ppm.json.
+- Tombol "Buka data tersimpan" memuat ulang data tersebut.
+
+ANIMASI BERANDA:
+Kilau cahaya, bintang berkelip, gelembung di tabung reaksi, daun berjatuhan,
+kunang-kunang di sekitar tanaman, efek geser mengikuti mouse, dan strip alur kerja
+(Foto > RGB > Kurva > ppm). Otomatis mati bila perangkat memakai mode "kurangi gerakan".
+
+JUDUL DAN PETANI:
+Tulisan "KELOMPOK 13" dibuat dari teks (font Press Start 2P), hurufnya bergelombang
+bergantian dan angka 13 berdenyut. Satu petani piksel melompat-lompat di atas huruf,
+berjalan bolak-balik. Untuk mengganti teks judul, ubah isi class "ttl" di index.html.
